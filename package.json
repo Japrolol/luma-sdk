@@ -1,0 +1,46 @@
+{
+  "name": "@japro/luma-sdk",
+  "version": "0.1.0",
+  "description": "Luma API SDK",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "dev": "tsup src/index.ts --watch --format esm,cjs --dts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm clean && pnpm build",
+    "generate:client": "swagger-typescript-api generate -p ./src/api/api-schema-public.json -o ./src/api --axios --name generated-api.ts --api-class-name API"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "@types/node": "^25.3.0",
+    "eslint": "^9.35.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.4.0",
+    "prettier": "^3.6.2",
+    "swagger-typescript-api": "^13.2.18",
+    "tsup": "^8.0.0",
+    "typescript-eslint": "^8.42.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.5"
+  }
+}

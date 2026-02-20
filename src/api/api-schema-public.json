@@ -1,0 +1,1002 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Luma API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/public/v1/ai/chat/{integration_id}": {
+      "post": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Chat With Draft By Integration ID",
+        "description": "Streams AI chat responses for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "chat_api_public_v1_ai_chat__integration_id__post",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Draft already completed."
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "description": "Draft not found for the provided integration_id and organization."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/draft": {
+      "post": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Create Draft By Integration ID",
+        "description": "Creates a draft for a given `integration_id` (the external course identifier you are building a draft for) under the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "create_draft_api_public_v1_draft_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDraft"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDraftResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "A draft with this integration_id already exists for the organization."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/public/v1/draft/ingest/{integration_id}": {
+      "post": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Ingest File To Draft By Integration ID",
+        "description": "Uploads a file to the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "ingest_api_public_v1_draft_ingest__integration_id__post",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_ingest_api_public_v1_draft_ingest__integration_id__post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestDraftResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid file type or file too large."
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "description": "Draft not found for the provided integration_id and organization."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/draft/ingest/{integration_id}/{document_id}": {
+      "delete": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Delete Ingested Document By Integration ID",
+        "description": "Removes a previously ingested document from the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "delete_ingested_document_api_public_v1_draft_ingest__integration_id___document_id__delete",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteIngestedDocumentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "description": "Draft not found for the provided integration_id and organization."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/draft/files/{integration_id}": {
+      "get": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Get Draft Files By Integration ID",
+        "description": "Returns all files linked to the draft for the provided `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "get_draft_files_api_public_v1_draft_files__integration_id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DraftFilesResponseBody"
+                  },
+                  "title": "Response Get Draft Files Api Public V1 Draft Files  Integration Id  Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "description": "Draft not found for the provided integration_id and organization."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/draft/{integration_id}": {
+      "get": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Get Draft Status By Integration ID",
+        "description": "Fetches draft status for the provided `integration_id` (the external course identifier you are building a draft for) inside the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "get_draft_api_public_v1_draft__integration_id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "description": "Draft not found for the provided integration_id and organization."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/draft/messages/{integration_id}": {
+      "get": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Get Draft Messages By Integration ID",
+        "description": "Returns all draft chat messages for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "get_draft_messages_api_public_v1_draft_messages__integration_id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DraftMessageResponse"
+                  },
+                  "title": "Response Get Draft Messages Api Public V1 Draft Messages  Integration Id  Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "description": "Draft not found for the provided integration_id and organization."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/draft/generated-course/{integration_id}": {
+      "get": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Get Generated Course By Integration ID",
+        "description": "Returns the generated course payload for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "get_generated_course_api_public_v1_draft_generated_course__integration_id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchitectCourseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "description": "Draft or generated course not found for the provided integration_id."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ArchitectAiMentorLesson": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "aiMentorInstructions": {
+            "type": "string",
+            "title": "Aimentorinstructions"
+          },
+          "completionConditions": {
+            "type": "string",
+            "title": "Completionconditions"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "ROLEPLAY",
+              "MENTOR",
+              "TEACHER"
+            ],
+            "title": "Type"
+          },
+          "taskDescription": {
+            "type": "string",
+            "title": "Taskdescription"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "aiMentorInstructions",
+          "completionConditions",
+          "type",
+          "taskDescription"
+        ],
+        "title": "ArchitectAiMentorLesson"
+      },
+      "ArchitectChapter": {
+        "properties": {
+          "chapterIndex": {
+            "type": "integer",
+            "title": "Chapterindex"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "lessons": {
+            "items": {
+              "$ref": "#/components/schemas/ArchitectLesson"
+            },
+            "type": "array",
+            "title": "Lessons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "chapterIndex",
+          "title",
+          "lessons"
+        ],
+        "title": "ArchitectChapter"
+      },
+      "ArchitectCourseResponse": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "chapters": {
+            "items": {
+              "$ref": "#/components/schemas/ArchitectChapter"
+            },
+            "type": "array",
+            "title": "Chapters"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "chapters"
+        ],
+        "title": "ArchitectCourseResponse"
+      },
+      "ArchitectLesson": {
+        "properties": {
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "AI_MENTOR",
+              "CONTENT",
+              "QUIZ"
+            ],
+            "title": "Lessontype"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "questions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ArchitectQuizQuestion"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Questions"
+          },
+          "aiMentor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ArchitectAiMentorLesson"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "lessonType",
+          "title",
+          "content",
+          "questions",
+          "aiMentor"
+        ],
+        "title": "ArchitectLesson"
+      },
+      "ArchitectQuizOption": {
+        "properties": {
+          "optionIndex": {
+            "type": "integer",
+            "title": "Optionindex"
+          },
+          "optionText": {
+            "type": "string",
+            "title": "Optiontext"
+          },
+          "isCorrect": {
+            "type": "boolean",
+            "title": "Iscorrect"
+          }
+        },
+        "type": "object",
+        "required": [
+          "optionIndex",
+          "optionText",
+          "isCorrect"
+        ],
+        "title": "ArchitectQuizOption"
+      },
+      "ArchitectQuizQuestion": {
+        "properties": {
+          "questionIndex": {
+            "type": "integer",
+            "title": "Questionindex"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "SingleSelect",
+              "MultiSelect",
+              "TrueOrFalse",
+              "BriefResponse",
+              "DetailedResponse",
+              "FillInTheBlanks",
+              "GapFill"
+            ],
+            "title": "Type"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "solutionExplanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solutionexplanation"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ArchitectQuizOption"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          }
+        },
+        "type": "object",
+        "required": [
+          "questionIndex",
+          "type",
+          "title",
+          "description",
+          "solutionExplanation",
+          "options"
+        ],
+        "title": "ArchitectQuizQuestion"
+      },
+      "Body_ingest_api_public_v1_draft_ingest__integration_id__post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_ingest_api_public_v1_draft_ingest__integration_id__post"
+      },
+      "CreateDraft": {
+        "properties": {
+          "integrationId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Integrationid"
+          },
+          "draftName": {
+            "type": "string",
+            "title": "Draftname"
+          }
+        },
+        "type": "object",
+        "required": [
+          "integrationId",
+          "draftName"
+        ],
+        "title": "CreateDraft"
+      },
+      "CreateDraftResponse": {
+        "properties": {
+          "draftId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Draftid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "draftId"
+        ],
+        "title": "CreateDraftResponse"
+      },
+      "DeleteIngestedDocumentResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "DeleteIngestedDocumentResponse"
+      },
+      "DraftFilesResponseBody": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "contentType": {
+            "type": "string",
+            "title": "Contenttype"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "filename",
+          "contentType"
+        ],
+        "title": "DraftFilesResponseBody"
+      },
+      "DraftMessageResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "draftId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Draftid"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "contentType": {
+            "type": "string",
+            "title": "Contenttype"
+          },
+          "draftMetadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Draftmetadata"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updatedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "draftId",
+          "role",
+          "content",
+          "contentType",
+          "createdAt",
+          "updatedAt"
+        ],
+        "title": "DraftMessageResponse"
+      },
+      "GetDraftResponse": {
+        "properties": {
+          "draftId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Draftid"
+          },
+          "isCourseGenerated": {
+            "type": "boolean",
+            "title": "Iscoursegenerated"
+          }
+        },
+        "type": "object",
+        "required": [
+          "draftId",
+          "isCourseGenerated"
+        ],
+        "title": "GetDraftResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "IngestDraftResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "queued": {
+            "type": "boolean",
+            "title": "Queued"
+          },
+          "jobId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jobid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "queued"
+        ],
+        "title": "IngestDraftResponse"
+      },
+      "Message": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "Message"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "APIKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
