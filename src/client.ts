@@ -1,4 +1,4 @@
-import { API } from "./api/generated-api";
+import { API, DeleteDraftResponse } from "./api/generated-api";
 import { Agent as HttpsAgent } from "node:https";
 import { PublicApiExecutions } from "./executions/public-api-executions";
 import {
@@ -30,9 +30,7 @@ export class LumaClient {
   constructor(opts: LumaClientOptions) {
     const httpsAgent =
       opts.httpsAgent ??
-      (opts.allowInsecureTls
-        ? new HttpsAgent({ rejectUnauthorized: false })
-        : undefined);
+      (opts.allowInsecureTls ? new HttpsAgent({ rejectUnauthorized: false }) : undefined);
 
     this.apiClient = new API({
       baseURL: opts.baseURL,
@@ -78,5 +76,9 @@ export class LumaClient {
 
   async getGeneratedCourse(opts: IntegrationIdOptions): Promise<GeneratedCourseResponse> {
     return this.executions.getGeneratedCourse(opts);
+  }
+
+  async deleteDraft(opts: IntegrationIdOptions): Promise<DeleteDraftResponse> {
+    return this.executions.deleteDraft(opts);
   }
 }

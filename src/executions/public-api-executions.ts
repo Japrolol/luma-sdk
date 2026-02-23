@@ -1,4 +1,4 @@
-import { API } from "../api/generated-api";
+import { API, DeleteDraftResponse } from "../api/generated-api";
 import {
   ChatOptions,
   CreateDraftOptions,
@@ -36,9 +36,7 @@ export class PublicApiExecutions {
     return response.data;
   }
 
-  async ingestDraftFile(
-    opts: IngestDraftFileOptions,
-  ): Promise<IngestDraftFileResponse> {
+  async ingestDraftFile(opts: IngestDraftFileOptions): Promise<IngestDraftFileResponse> {
     const response = await this.apiClient.api.ingestApiPublicV1DraftIngestIntegrationIdPost(
       opts.integrationId,
       {
@@ -73,9 +71,7 @@ export class PublicApiExecutions {
     return response.data;
   }
 
-  async getDraftMessages(
-    opts: IntegrationIdOptions,
-  ): Promise<DraftMessagesResponse> {
+  async getDraftMessages(opts: IntegrationIdOptions): Promise<DraftMessagesResponse> {
     const response =
       await this.apiClient.api.getDraftMessagesApiPublicV1DraftMessagesIntegrationIdGet(
         opts.integrationId,
@@ -83,13 +79,19 @@ export class PublicApiExecutions {
     return response.data;
   }
 
-  async getGeneratedCourse(
-    opts: IntegrationIdOptions,
-  ): Promise<GeneratedCourseResponse> {
+  async getGeneratedCourse(opts: IntegrationIdOptions): Promise<GeneratedCourseResponse> {
     const response =
       await this.apiClient.api.getGeneratedCourseApiPublicV1DraftGeneratedCourseIntegrationIdGet(
         opts.integrationId,
       );
+    return response.data;
+  }
+
+  async deleteDraft(opts: IntegrationIdOptions): Promise<DeleteDraftResponse> {
+    const response = await this.apiClient.api.deleteDraftApiPublicV1DraftIntegrationIdDelete(
+      opts.integrationId,
+    );
+
     return response.data;
   }
 }

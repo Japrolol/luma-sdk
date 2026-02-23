@@ -124,6 +124,114 @@
         ]
       }
     },
+    "/api/public/v1/draft/{integration_id}": {
+      "delete": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Delete Draft By Integration ID",
+        "description": "Deletes the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "delete_draft_api_public_v1_draft__integration_id__delete",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteDraftResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "description": "Draft not found for the provided integration_id and organization."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Get Draft Status By Integration ID",
+        "description": "Fetches draft status for the provided `integration_id` (the external course identifier you are building a draft for) inside the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "get_draft_api_public_v1_draft__integration_id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "description": "Draft not found for the provided integration_id and organization."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/public/v1/draft/ingest/{integration_id}": {
       "post": {
         "tags": [
@@ -316,61 +424,6 @@
         }
       }
     },
-    "/api/public/v1/draft/{integration_id}": {
-      "get": {
-        "tags": [
-          "Public - Require API Key"
-        ],
-        "summary": "Get Draft Status By Integration ID",
-        "description": "Fetches draft status for the provided `integration_id` (the external course identifier you are building a draft for) inside the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
-        "operationId": "get_draft_api_public_v1_draft__integration_id__get",
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "integration_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Integration Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetDraftResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid API key."
-          },
-          "404": {
-            "description": "Draft not found for the provided integration_id and organization."
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/public/v1/draft/messages/{integration_id}": {
       "get": {
         "tags": [
@@ -516,6 +569,7 @@
             "title": "Taskdescription"
           }
         },
+        "additionalProperties": true,
         "type": "object",
         "required": [
           "name",
@@ -544,6 +598,7 @@
             "title": "Lessons"
           }
         },
+        "additionalProperties": true,
         "type": "object",
         "required": [
           "chapterIndex",
@@ -570,6 +625,7 @@
             "title": "Chapters"
           }
         },
+        "additionalProperties": true,
         "type": "object",
         "required": [
           "title",
@@ -629,6 +685,7 @@
             ]
           }
         },
+        "additionalProperties": true,
         "type": "object",
         "required": [
           "lessonType",
@@ -654,6 +711,7 @@
             "title": "Iscorrect"
           }
         },
+        "additionalProperties": true,
         "type": "object",
         "required": [
           "optionIndex",
@@ -722,6 +780,7 @@
             "title": "Options"
           }
         },
+        "additionalProperties": true,
         "type": "object",
         "required": [
           "questionIndex",
@@ -779,6 +838,19 @@
           "draftId"
         ],
         "title": "CreateDraftResponse"
+      },
+      "DeleteDraftResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "DeleteDraftResponse"
       },
       "DeleteIngestedDocumentResponse": {
         "properties": {

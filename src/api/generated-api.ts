@@ -22,6 +22,7 @@ export interface ArchitectAiMentorLesson {
   type: "ROLEPLAY" | "MENTOR" | "TEACHER";
   /** Taskdescription */
   taskDescription: string;
+  [key: string]: any;
 }
 
 /** ArchitectChapter */
@@ -32,6 +33,7 @@ export interface ArchitectChapter {
   title: string;
   /** Lessons */
   lessons: ArchitectLesson[];
+  [key: string]: any;
 }
 
 /** ArchitectCourseResponse */
@@ -42,6 +44,7 @@ export interface ArchitectCourseResponse {
   description: string;
   /** Chapters */
   chapters: ArchitectChapter[];
+  [key: string]: any;
 }
 
 /** ArchitectLesson */
@@ -55,6 +58,7 @@ export interface ArchitectLesson {
   /** Questions */
   questions: ArchitectQuizQuestion[] | null;
   aiMentor: ArchitectAiMentorLesson | null;
+  [key: string]: any;
 }
 
 /** ArchitectQuizOption */
@@ -65,6 +69,7 @@ export interface ArchitectQuizOption {
   optionText: string;
   /** Iscorrect */
   isCorrect: boolean;
+  [key: string]: any;
 }
 
 /** ArchitectQuizQuestion */
@@ -88,6 +93,7 @@ export interface ArchitectQuizQuestion {
   solutionExplanation: string | null;
   /** Options */
   options: ArchitectQuizOption[] | null;
+  [key: string]: any;
 }
 
 /** Body_ingest_api_public_v1_draft_ingest__integration_id__post */
@@ -117,6 +123,12 @@ export interface CreateDraftResponse {
    * @format uuid
    */
   draftId: string;
+}
+
+/** DeleteDraftResponse */
+export interface DeleteDraftResponse {
+  /** Message */
+  message: string;
 }
 
 /** DeleteIngestedDocumentResponse */
@@ -448,6 +460,48 @@ export class API<
       }),
 
     /**
+     * @description Deletes the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
+     *
+     * @tags Public - Require API Key
+     * @name DeleteDraftApiPublicV1DraftIntegrationIdDelete
+     * @summary Delete Draft By Integration ID
+     * @request DELETE:/api/public/v1/draft/{integration_id}
+     * @secure
+     */
+    deleteDraftApiPublicV1DraftIntegrationIdDelete: (
+      integrationId: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<DeleteDraftResponse, void | HTTPValidationError>({
+        path: `/api/public/v1/draft/${integrationId}`,
+        method: "DELETE",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Fetches draft status for the provided `integration_id` (the external course identifier you are building a draft for) inside the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
+     *
+     * @tags Public - Require API Key
+     * @name GetDraftApiPublicV1DraftIntegrationIdGet
+     * @summary Get Draft Status By Integration ID
+     * @request GET:/api/public/v1/draft/{integration_id}
+     * @secure
+     */
+    getDraftApiPublicV1DraftIntegrationIdGet: (
+      integrationId: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<GetDraftResponse, void | HTTPValidationError>({
+        path: `/api/public/v1/draft/${integrationId}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Uploads a file to the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
      *
      * @tags Public - Require API Key
@@ -508,27 +562,6 @@ export class API<
     ) =>
       this.request<DraftFilesResponseBody[], void | HTTPValidationError>({
         path: `/api/public/v1/draft/files/${integrationId}`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * @description Fetches draft status for the provided `integration_id` (the external course identifier you are building a draft for) inside the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
-     *
-     * @tags Public - Require API Key
-     * @name GetDraftApiPublicV1DraftIntegrationIdGet
-     * @summary Get Draft Status By Integration ID
-     * @request GET:/api/public/v1/draft/{integration_id}
-     * @secure
-     */
-    getDraftApiPublicV1DraftIntegrationIdGet: (
-      integrationId: string,
-      params: RequestParams = {},
-    ) =>
-      this.request<GetDraftResponse, void | HTTPValidationError>({
-        path: `/api/public/v1/draft/${integrationId}`,
         method: "GET",
         secure: true,
         format: "json",
