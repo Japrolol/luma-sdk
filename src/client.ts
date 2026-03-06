@@ -14,6 +14,7 @@ import {
   IngestDraftFileResponse,
   IngestDraftFileOptions,
   IntegrationIdOptions,
+  AssetsResponse,
 } from "./types";
 
 export type LumaClientOptions = {
@@ -80,5 +81,9 @@ export class LumaClient {
 
   async deleteDraft(opts: IntegrationIdOptions): Promise<DeleteDraftResponse> {
     return this.executions.deleteDraft(opts);
+  }
+
+  async getAssets(opts: IntegrationIdOptions): Promise<AssetsResponse> {
+    return this.executions.getAssets(opts);
   }
 }

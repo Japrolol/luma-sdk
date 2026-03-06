@@ -4,7 +4,7 @@ import type {
   CreateDraft,
   DraftMessageResponse,
   DraftFilesResponseBody,
-  Message,
+  Message, AssetResponse,
 } from "./api/generated-api";
 export type {
   CreateDraftResponse,
@@ -25,6 +25,7 @@ export type DraftFilesResponse = DraftFile[];
 export type DraftMessage = DraftMessageResponse;
 export type DraftMessagesResponse = DraftMessage[];
 export type GeneratedCourseResponse = ArchitectCourseResponse;
+export type AssetsResponse = AssetResponse[];
 
 export type IngestDraftFileOptions = IntegrationIdOptions &
   BodyIngestApiPublicV1DraftIngestIntegrationIdPost;

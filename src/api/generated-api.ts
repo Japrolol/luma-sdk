@@ -58,6 +58,8 @@ export interface ArchitectLesson {
   /** Questions */
   questions: ArchitectQuizQuestion[] | null;
   aiMentor: ArchitectAiMentorLesson | null;
+  /** Assets */
+  assets: NapkinAssetItem[];
   [key: string]: any;
 }
 
@@ -94,6 +96,17 @@ export interface ArchitectQuizQuestion {
   /** Options */
   options: ArchitectQuizOption[] | null;
   [key: string]: any;
+}
+
+/** AssetResponse */
+export interface AssetResponse {
+  /**
+   * Assetid
+   * @format uuid
+   */
+  assetId: string;
+  /** Signedurl */
+  signedUrl: string;
 }
 
 /** Body_ingest_api_public_v1_draft_ingest__integration_id__post */
@@ -213,6 +226,39 @@ export interface IngestDraftResponse {
 export interface Message {
   /** Message */
   message: string;
+}
+
+/** NapkinAssetItem */
+export interface NapkinAssetItem {
+  /**
+   * Type
+   * Asset type. Currently only image is supported.
+   */
+  type: "image";
+  /**
+   * Content
+   * Short semantic prompt for the image. Keep concise to reduce token usage while preserving the core meaning.
+   * @minLength 1
+   * @maxLength 220
+   */
+  content: string;
+  /**
+   * Visual Query
+   * Requested visual format/style as text (e.g., flowchart, mindmap, timeline, system diagram).
+   * @minLength 1
+   * @maxLength 80
+   */
+  visual_query: string;
+  /**
+   * Priority
+   * high: absolutely necessary for lesson comprehension; medium: helpful/nice to have; low: not necessary for the lesson.
+   */
+  priority: "high" | "medium" | "low";
+  /**
+   * Transparent Background
+   * Whether the generated image should use a transparent background.
+   */
+  transparent_background: boolean;
 }
 
 /** ValidationError */
@@ -432,6 +478,27 @@ export class API<
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Returns all generated and in-progress AI assets for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
+     *
+     * @tags Public - Require API Key
+     * @name GetAssetsApiPublicV1AiAssetsIntegrationIdGet
+     * @summary Get Draft Assets By Integration ID
+     * @request GET:/api/public/v1/ai/assets/{integration_id}
+     * @secure
+     */
+    getAssetsApiPublicV1AiAssetsIntegrationIdGet: (
+      integrationId: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<AssetResponse[], void | HTTPValidationError>({
+        path: `/api/public/v1/ai/assets/${integrationId}`,
+        method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),

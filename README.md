@@ -75,6 +75,7 @@ const status = await client.getDraft({ integrationId: "course-123" });
 const files = await client.getDraftFiles({ integrationId: "course-123" });
 const messages = await client.getDraftMessages({ integrationId: "course-123" });
 const course = await client.getGeneratedCourse({ integrationId: "course-123" });
+const assets = await client.getAssets({ integrationId: "course-123" });
 ```
 
 ### 5) Delete ingested documents
@@ -85,6 +86,25 @@ await client.deleteIngestedDocument({
   documentId: "doc-uuid",
 });
 ```
+
+### 6) Delete a draft
+
+```ts
+await client.deleteDraft({ integrationId: "course-123" });
+```
+
+## HTTP Endpoints
+
+- `POST /api/public/v1/draft`
+- `GET /api/public/v1/draft/{integration_id}`
+- `DELETE /api/public/v1/draft/{integration_id}`
+- `POST /api/public/v1/draft/ingest/{integration_id}`
+- `DELETE /api/public/v1/draft/ingest/{integration_id}/{document_id}`
+- `GET /api/public/v1/draft/files/{integration_id}`
+- `GET /api/public/v1/draft/messages/{integration_id}`
+- `GET /api/public/v1/draft/generated-course/{integration_id}`
+- `POST /api/public/v1/ai/chat/{integration_id}`
+- `GET /api/public/v1/ai/assets/{integration_id}`
 
 ## Exports
 
