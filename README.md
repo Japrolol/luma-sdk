@@ -39,6 +39,7 @@ const client = createLumaClient({
 const draft = await client.createDraft({
   integrationId: "course-123",
   draftName: "Cybersecurity Fundamentals",
+  courseLanguage: "en", // e.g. "pl", "en", etc.
 });
 
 console.log(draft.draftId);
