@@ -125,6 +125,8 @@ export interface CreateDraft {
    * @format uuid
    */
   integrationId: string;
+  /** Courselanguage */
+  courseLanguage: string;
   /** Draftname */
   draftName: string;
 }
@@ -254,11 +256,6 @@ export interface NapkinAssetItem {
    * high: absolutely necessary for lesson comprehension; medium: helpful/nice to have; low: not necessary for the lesson.
    */
   priority: "high" | "medium" | "low";
-  /**
-   * Transparent Background
-   * Whether the generated image should use a transparent background.
-   */
-  transparent_background: boolean;
 }
 
 /** ValidationError */
@@ -483,7 +480,7 @@ export class API<
       }),
 
     /**
-     * @description Returns all generated and in-progress AI assets for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
+     * @description Returns only ready AI assets (successfully generated and uploaded) for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
      *
      * @tags Public - Require API Key
      * @name GetAssetsApiPublicV1AiAssetsIntegrationIdGet

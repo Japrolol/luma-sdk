@@ -77,7 +77,7 @@
           "Public - Require API Key"
         ],
         "summary": "Get Draft Assets By Integration ID",
-        "description": "Returns all generated and in-progress AI assets for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "description": "Returns only ready AI assets (successfully generated and uploaded) for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_assets_api_public_v1_ai_assets__integration_id__get",
         "security": [
           {
@@ -899,6 +899,10 @@
             "format": "uuid",
             "title": "Integrationid"
           },
+          "courseLanguage": {
+            "type": "string",
+            "title": "Courselanguage"
+          },
           "draftName": {
             "type": "string",
             "title": "Draftname"
@@ -907,6 +911,7 @@
         "type": "object",
         "required": [
           "integrationId",
+          "courseLanguage",
           "draftName"
         ],
         "title": "CreateDraft"
@@ -1139,11 +1144,6 @@
             ],
             "title": "Priority",
             "description": "high: absolutely necessary for lesson comprehension; medium: helpful/nice to have; low: not necessary for the lesson."
-          },
-          "transparent_background": {
-            "type": "boolean",
-            "title": "Transparent Background",
-            "description": "Whether the generated image should use a transparent background."
           }
         },
         "additionalProperties": false,
@@ -1152,8 +1152,7 @@
           "type",
           "content",
           "visual_query",
-          "priority",
-          "transparent_background"
+          "priority"
         ],
         "title": "NapkinAssetItem"
       },
