@@ -1,21 +1,22 @@
-import { API, DeleteDraftResponse } from "./api/generated-api";
 import { Agent as HttpsAgent } from "node:https";
-import { PublicApiExecutions } from "./executions/public-api-executions";
+
+import { API, DeleteDraftResponse } from "../api/generated-api";
+import { PublicApiExecutions } from "../executions/public-api-executions";
 import {
+  AssetsResponse,
   ChatOptions,
   CreateDraftOptions,
   CreateDraftResponse,
-  DeleteIngestedDocumentResponse,
   DeleteIngestedDocumentOptions,
+  DeleteIngestedDocumentResponse,
   DraftFilesResponse,
   DraftMessagesResponse,
   GeneratedCourseResponse,
   GetDraftResponse,
-  IngestDraftFileResponse,
   IngestDraftFileOptions,
+  IngestDraftFileResponse,
   IntegrationIdOptions,
-  AssetsResponse,
-} from "./types";
+} from "../types";
 
 export type LumaClientOptions = {
   baseURL?: string;
@@ -87,3 +88,7 @@ export class LumaClient {
     return this.executions.getAssets(opts);
   }
 }
+
+export const createLumaClient = (opts: LumaClientOptions): LumaClient => {
+  return new LumaClient(opts);
+};

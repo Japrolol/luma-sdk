@@ -1,7 +1,10 @@
 # Luma SDK
 
-TypeScript SDK for the Luma agentic platform used by Mentingo.  
-This SDK wraps Luma's public API for multi-agent draft creation, ingestion, chat, and generated course retrieval.
+TypeScript SDK for the Luma platform used by Mentingo.
+
+It provides two separate clients:
+- HTTP client for public API operations (drafts, ingestion, chat, assets)
+- Socket client for realtime audio/voice mentor flows
 
 ## Installation
 
@@ -13,7 +16,7 @@ npm install @japro/luma-sdk
 yarn add @japro/luma-sdk
 ```
 
-## Quick Start
+## Quick Start (HTTP)
 
 ```ts
 import { createLumaClient } from "@japro/luma-sdk";
@@ -22,96 +25,110 @@ const client = createLumaClient({
   baseURL: "https://your-luma-api.example.com",
   apiKey: process.env.LUMA_API_KEY,
 });
-```
 
-## Client Options
-
-- `baseURL?: string` - Luma API base URL.
-- `apiKey?: string` - API key sent as `X-API-Key`.
-- `httpsAgent?: Agent` - custom Node.js HTTPS agent.
-- `allowInsecureTls?: boolean` - if `true`, creates an HTTPS agent with `rejectUnauthorized: false` (use only in local/dev environments).
-
-## Core API
-
-### 1) Create a draft
-
-```ts
 const draft = await client.createDraft({
   integrationId: "course-123",
   draftName: "Cybersecurity Fundamentals",
-  courseLanguage: "en", // e.g. "pl", "en", etc.
-});
-
-console.log(draft.draftId);
-```
-
-### 2) Ingest a file into a draft
-
-```ts
-const file = new File(["file-content"], "source.txt", { type: "text/plain" });
-
-const ingestResult = await client.ingestDraftFile({
-  integrationId: "course-123",
-  file,
-});
-
-console.log(ingestResult.success, ingestResult.jobId);
-```
-
-### 3) Chat with the draft context
-
-```ts
-const response = await client.chat({
-  integrationId: "course-123",
-  message: "Build a 5-module beginner learning path",
-});
-
-console.log(response.data);
-```
-
-### 4) Read draft artifacts
-
-```ts
-const status = await client.getDraft({ integrationId: "course-123" });
-const files = await client.getDraftFiles({ integrationId: "course-123" });
-const messages = await client.getDraftMessages({ integrationId: "course-123" });
-const course = await client.getGeneratedCourse({ integrationId: "course-123" });
-const assets = await client.getAssets({ integrationId: "course-123" });
-```
-
-### 5) Delete ingested documents
-
-```ts
-await client.deleteIngestedDocument({
-  integrationId: "course-123",
-  documentId: "doc-uuid",
+  courseLanguage: "en",
 });
 ```
 
-### 6) Delete a draft
+## Quick Start (Socket)
 
 ```ts
-await client.deleteDraft({ integrationId: "course-123" });
+import { createLumaSocket } from "@japro/luma-sdk";
+
+const socket = createLumaSocket({
+  baseURL: "https://your-luma-api.example.com",
+  apiKey: process.env.LUMA_API_KEY,
+  socketData: {
+    sessionId: "session-123",
+    userId: "user-123",
+    lessonId: "lesson-123",
+  },
+});
+
+socket
+  .onServerConnected((payload) => console.log("connected", payload))
+  .onMentorTranscription((payload) => console.log("transcription", payload))
+  .onAudioOutputChunk((payload) => console.log("audio chunk", payload));
+
+socket.connect();
+
+socket.startAudio({
+  type: "audio.start",
+  audioAction: "VOICE_MENTOR",
+  meta: { sr: 16000, channels: 1, format: "pcm_s16le" },
+});
+
+socket.sendAudioChunk(
+  {
+    type: "audio.chunk",
+    meta: { seq: 1, sr: 16000, samples: 320, tsMs: Date.now() },
+  },
+  new Uint8Array([0, 1, 2]),
+);
+
+socket.stopAudio();
 ```
 
-## HTTP Endpoints
+## HTTP Client API
 
-- `POST /api/public/v1/draft`
-- `GET /api/public/v1/draft/{integration_id}`
-- `DELETE /api/public/v1/draft/{integration_id}`
-- `POST /api/public/v1/draft/ingest/{integration_id}`
-- `DELETE /api/public/v1/draft/ingest/{integration_id}/{document_id}`
-- `GET /api/public/v1/draft/files/{integration_id}`
-- `GET /api/public/v1/draft/messages/{integration_id}`
-- `GET /api/public/v1/draft/generated-course/{integration_id}`
-- `POST /api/public/v1/ai/chat/{integration_id}`
-- `GET /api/public/v1/ai/assets/{integration_id}`
+### `createLumaClient(opts)`
 
-## Exports
+Options:
+- `baseURL?: string` - Luma API base URL.
+- `apiKey?: string` - API key sent as `X-API-Key`.
+- `httpsAgent?: Agent` - custom Node.js HTTPS agent.
+- `allowInsecureTls?: boolean` - if `true`, uses `rejectUnauthorized: false` (dev only).
 
-- `createLumaClient(opts)`
-- `LumaClient`
-- All SDK types from `src/types.ts`
+Methods:
+- `chat(opts)`
+- `createDraft(opts)`
+- `ingestDraftFile(opts)`
+- `deleteIngestedDocument(opts)`
+- `getDraftFiles(opts)`
+- `getDraft(opts)`
+- `getDraftMessages(opts)`
+- `getGeneratedCourse(opts)`
+- `deleteDraft(opts)`
+- `getAssets(opts)`
+
+## Socket Client API
+
+### `createLumaSocket(opts)`
+
+Options:
+- `baseURL?: string`
+- `apiKey?: string`
+- `allowInsecureTls?: boolean`
+- `socketData?: { sessionId?: string; userId?: string; lessonId?: string }`
+
+Emit helpers:
+- `startAudio(payload)` -> emits `start_audio`
+- `sendAudioChunk(payload, chunk)` -> emits `audio_chunk`
+- `stopAudio(payload?)` -> emits `audio_stop`
+- `sendMentorTextDelta(payload)` -> emits `mentor_text_delta`
+- `sendMentorTextEnd(payload)` -> emits `mentor_text_end`
+- `sendMentorTextError(payload)` -> emits `mentor_text_error`
+- `sendPing(payload?)` -> emits `ping`
+
+Listener helpers:
+- `onServerConnected(handler)` -> listens `server:connected`
+- `onAudioStarted(handler)` -> listens `audio:started`
+- `onAudioChunked(handler)` -> listens `audio:chunked`
+- `onAudioStopped(handler)` -> listens `audio:stopped`
+- `onMentorTranscription(handler)` -> listens `mentor:transcription`
+- `onAudioOutputChunk(handler)` -> listens `audio:output:chunk`
+- `onAudioOutputInterrupted(handler)` -> listens `audio:output:interrupted`
+- `onAudioOutputError(handler)` -> listens `audio:output:error`
+- `onAudioOutputComplete(handler)` -> listens `audio:output:complete`
+
+## Public Exports
+
+- HTTP: `createLumaClient`, `LumaClient`, `LumaClientOptions`
+- Socket: `createLumaSocket`, `LumaSocket`, socket payload/event types from `src/socket/types.ts`
+- Shared API/domain types from `src/types.ts`
 
 ## Development
 
@@ -127,11 +144,10 @@ pnpm lint
 pnpm generate:client
 ```
 
-This uses `src/api/api-schema-public.json` to regenerate `src/api/generated-api.ts`.
+Uses `src/api/api-schema-public.json` to regenerate `src/api/generated-api.ts`.
 
 ## Notes
 
-- The SDK is built with `tsup` and ships both ESM and CJS outputs.
-- API calls are authenticated with the `X-API-Key` header.
-- `chat(...)` returns the underlying HTTP response from the generated API client.
-- Keep API keys out of source control and prefer environment variables.
+- Built with `tsup` and ships ESM + CJS.
+- HTTP auth uses the `X-API-Key` header.
+- Keep API keys out of source control.
