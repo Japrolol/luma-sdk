@@ -20,7 +20,7 @@ export const LUMA_AUDIO_FORMATS = {
 export const LUMA_SOCKET_LISTEN_EVENTS = {
   SERVER_CONNECTED: "server:connected",
   PONG: "pong",
-  AUDIO_STARTED: "audio:started",
+  AUDIO_STARTED: "audio:start",
   AUDIO_CHUNKED: "audio:chunked",
   AUDIO_STOPPED: "audio:stopped",
   MENTOR_TRANSCRIPTION: "mentor:transcription",
@@ -28,6 +28,14 @@ export const LUMA_SOCKET_LISTEN_EVENTS = {
   AUDIO_OUTPUT_INTERRUPTED: "audio:output:interrupted",
   AUDIO_OUTPUT_ERROR: "audio:output:error",
   AUDIO_OUTPUT_COMPLETE: "audio:output:complete",
+} as const;
+
+export const LUMA_MENTOR_STREAM_EVENT_TYPES = {
+  MENTOR_TRANSCRIPTION: "mentor.transcription",
+  AUDIO_OUTPUT_CHUNK: "audio.output.chunk",
+  AUDIO_OUTPUT_INTERRUPTED: "audio.output.interrupted",
+  AUDIO_OUTPUT_ERROR: "audio.output.error",
+  AUDIO_OUTPUT_COMPLETE: "audio.output.complete",
 } as const;
 
 export const LUMA_SOCKET_EMIT_EVENTS = {
@@ -93,17 +101,79 @@ export type ServerConnectedPayload = {
   sessionId: string;
 };
 
+export type AudioStartedPayload = {
+  [key: string]: unknown;
+};
+
+export type MentorStreamEventEnvelope<TType extends string, TData> = {
+  type: TType;
+  sessionId: string;
+  jobId: string;
+  tsMs: number;
+  data: TData;
+};
+
+export type MentorTranscriptionData = {
+  text: string;
+};
+
+export type AudioOutputChunkData = {
+  seq: number;
+  codec: string;
+  chunkBase64: string;
+  sampleRate?: number | null;
+};
+
+export type AudioOutputInterruptedData = {
+  reason: string;
+};
+
+export type AudioOutputErrorData = {
+  code: string;
+  message: string;
+  retryable: boolean;
+};
+
+export type AudioOutputCompleteData = {
+  totalChunks: number;
+};
+
+export type MentorTranscriptionPayload = MentorStreamEventEnvelope<
+  (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["MENTOR_TRANSCRIPTION"],
+  MentorTranscriptionData
+>;
+
+export type AudioOutputChunkPayload = MentorStreamEventEnvelope<
+  (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["AUDIO_OUTPUT_CHUNK"],
+  AudioOutputChunkData
+>;
+
+export type AudioOutputInterruptedPayload = MentorStreamEventEnvelope<
+  (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["AUDIO_OUTPUT_INTERRUPTED"],
+  AudioOutputInterruptedData
+>;
+
+export type AudioOutputErrorPayload = MentorStreamEventEnvelope<
+  (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["AUDIO_OUTPUT_ERROR"],
+  AudioOutputErrorData
+>;
+
+export type AudioOutputCompletePayload = MentorStreamEventEnvelope<
+  (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["AUDIO_OUTPUT_COMPLETE"],
+  AudioOutputCompleteData
+>;
+
 export type LumaSocketListenEvents = {
   [LUMA_SOCKET_LISTEN_EVENTS.SERVER_CONNECTED]: (payload: ServerConnectedPayload) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.PONG]: (payload: unknown) => void;
-  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STARTED]: (payload: unknown) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STARTED]: (payload: AudioStartedPayload) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNKED]: (payload: unknown) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED]: (payload: unknown) => void;
-  [LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION]: (payload: unknown) => void;
-  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK]: (payload: unknown) => void;
-  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_INTERRUPTED]: (payload: unknown) => void;
-  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ERROR]: (payload: unknown) => void;
-  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_COMPLETE]: (payload: unknown) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION]: (payload: MentorTranscriptionPayload) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK]: (payload: AudioOutputChunkPayload) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_INTERRUPTED]: (payload: AudioOutputInterruptedPayload) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ERROR]: (payload: AudioOutputErrorPayload) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_COMPLETE]: (payload: AudioOutputCompletePayload) => void;
 };
 
 export type LumaSocketEmitEvents = {
