@@ -36,7 +36,12 @@ const draft = await client.createDraft({
 ## Quick Start (Socket)
 
 ```ts
-import { createLumaSocket } from "@japro/luma-sdk";
+import {
+  createLumaSocket,
+  LUMA_AUDIO_ACTIONS,
+  LUMA_AUDIO_FORMATS,
+  LUMA_SOCKET_MESSAGE_TYPES,
+} from "@japro/luma-sdk";
 
 const socket = createLumaSocket({
   baseURL: "https://your-luma-api.example.com",
@@ -56,14 +61,14 @@ socket
 socket.connect();
 
 socket.startAudio({
-  type: "audio.start",
-  audioAction: "VOICE_MENTOR",
-  meta: { sr: 16000, channels: 1, format: "pcm_s16le" },
+  type: LUMA_SOCKET_MESSAGE_TYPES.AUDIO_START,
+  audioAction: LUMA_AUDIO_ACTIONS.VOICE_MENTOR,
+  meta: { sr: 16000, channels: 1, format: LUMA_AUDIO_FORMATS.PCM_S16LE },
 });
 
 socket.sendAudioChunk(
   {
-    type: "audio.chunk",
+    type: LUMA_SOCKET_MESSAGE_TYPES.AUDIO_CHUNK,
     meta: { seq: 1, sr: 16000, samples: 320, tsMs: Date.now() },
   },
   new Uint8Array([0, 1, 2]),
