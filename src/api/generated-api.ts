@@ -258,6 +258,14 @@ export interface NapkinAssetItem {
   priority: "high" | "medium" | "low";
 }
 
+/** PublicConfigurationResponse */
+export interface PublicConfigurationResponse {
+  /** Coursegeneration */
+  courseGeneration: boolean;
+  /** Voicementor */
+  voiceMentor: boolean;
+}
+
 /** ValidationError */
 export interface ValidationError {
   /** Location */
@@ -512,7 +520,7 @@ export class API<
     getConfigurationStatusApiPublicV1AiConfigurationGet: (
       params: RequestParams = {},
     ) =>
-      this.request<Record<string, boolean>, void>({
+      this.request<PublicConfigurationResponse, void>({
         path: `/api/public/v1/ai/configuration`,
         method: "GET",
         secure: true,

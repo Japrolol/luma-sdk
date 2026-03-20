@@ -1,8 +1,7 @@
-import {API, DeleteDraftResponse} from "../api/generated-api";
+import { API, DeleteDraftResponse, PublicConfigurationResponse } from "../api/generated-api";
 import {
   AssetsResponse,
   ChatOptions,
-  ConfigurationResponse,
   CreateDraftOptions,
   CreateDraftResponse,
   DeleteIngestedDocumentOptions,
@@ -105,7 +104,7 @@ export class PublicApiExecutions {
     return response.data;
   }
 
-  async getConfiguration(): Promise<ConfigurationResponse> {
+  async getConfiguration(): Promise<PublicConfigurationResponse> {
     const response = await this.apiClient.api.getConfigurationStatusApiPublicV1AiConfigurationGet();
 
     return response.data;

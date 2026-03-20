@@ -144,11 +144,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": {
-                    "type": "boolean"
-                  },
-                  "type": "object",
-                  "title": "Response Get Configuration Status Api Public V1 Ai Configuration Get"
+                  "$ref": "#/components/schemas/PublicConfigurationResponse"
                 }
               }
             }
@@ -1189,6 +1185,24 @@
           "priority"
         ],
         "title": "NapkinAssetItem"
+      },
+      "PublicConfigurationResponse": {
+        "properties": {
+          "courseGeneration": {
+            "type": "boolean",
+            "title": "Coursegeneration"
+          },
+          "voiceMentor": {
+            "type": "boolean",
+            "title": "Voicementor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "courseGeneration",
+          "voiceMentor"
+        ],
+        "title": "PublicConfigurationResponse"
       },
       "ValidationError": {
         "properties": {

@@ -1,11 +1,10 @@
 import { Agent as HttpsAgent } from "node:https";
 
-import { API, DeleteDraftResponse } from "../api/generated-api";
+import { API, DeleteDraftResponse, PublicConfigurationResponse } from "../api/generated-api";
 import { PublicApiExecutions } from "../executions/public-api-executions";
 import {
   AssetsResponse,
   ChatOptions,
-  ConfigurationResponse,
   CreateDraftOptions,
   CreateDraftResponse,
   DeleteIngestedDocumentOptions,
@@ -89,7 +88,7 @@ export class LumaClient {
     return this.executions.getAssets(opts);
   }
 
-  async getConfiguration(): Promise<ConfigurationResponse> {
+  async getConfiguration(): Promise<PublicConfigurationResponse> {
     return this.executions.getConfiguration();
   }
 }
