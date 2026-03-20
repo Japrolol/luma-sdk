@@ -656,6 +656,14 @@
           "taskDescription": {
             "type": "string",
             "title": "Taskdescription"
+          },
+          "ttsPreset": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female"
+            ],
+            "title": "Ttspreset"
           }
         },
         "additionalProperties": true,
@@ -665,7 +673,8 @@
           "aiMentorInstructions",
           "completionConditions",
           "type",
-          "taskDescription"
+          "taskDescription",
+          "ttsPreset"
         ],
         "title": "ArchitectAiMentorLesson"
       },

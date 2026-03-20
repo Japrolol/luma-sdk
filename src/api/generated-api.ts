@@ -22,6 +22,8 @@ export interface ArchitectAiMentorLesson {
   type: "ROLEPLAY" | "MENTOR" | "TEACHER";
   /** Taskdescription */
   taskDescription: string;
+  /** Ttspreset */
+  ttsPreset: "male" | "female";
   [key: string]: any;
 }
 
