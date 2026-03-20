@@ -1,17 +1,19 @@
 import {API, DeleteDraftResponse} from "../api/generated-api";
 import {
+  AssetsResponse,
   ChatOptions,
+  ConfigurationResponse,
   CreateDraftOptions,
   CreateDraftResponse,
-  DeleteIngestedDocumentResponse,
   DeleteIngestedDocumentOptions,
+  DeleteIngestedDocumentResponse,
   DraftFilesResponse,
   DraftMessagesResponse,
   GeneratedCourseResponse,
   GetDraftResponse,
-  IngestDraftFileResponse,
   IngestDraftFileOptions,
-  IntegrationIdOptions, AssetsResponse,
+  IngestDraftFileResponse,
+  IntegrationIdOptions,
 } from "../types";
 
 export class PublicApiExecutions {
@@ -96,7 +98,15 @@ export class PublicApiExecutions {
   }
 
   async getAssets(opts: IntegrationIdOptions): Promise<AssetsResponse> {
-    const response = await this.apiClient.api.getAssetsApiPublicV1AiAssetsIntegrationIdGet(opts.integrationId);
+    const response = await this.apiClient.api.getAssetsApiPublicV1AiAssetsIntegrationIdGet(
+      opts.integrationId,
+    );
+
+    return response.data;
+  }
+
+  async getConfiguration(): Promise<ConfigurationResponse> {
+    const response = await this.apiClient.api.getConfigurationStatusApiPublicV1AiConfigurationGet();
 
     return response.data;
   }

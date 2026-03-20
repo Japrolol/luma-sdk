@@ -5,6 +5,7 @@ import { PublicApiExecutions } from "../executions/public-api-executions";
 import {
   AssetsResponse,
   ChatOptions,
+  ConfigurationResponse,
   CreateDraftOptions,
   CreateDraftResponse,
   DeleteIngestedDocumentOptions,
@@ -86,6 +87,10 @@ export class LumaClient {
 
   async getAssets(opts: IntegrationIdOptions): Promise<AssetsResponse> {
     return this.executions.getAssets(opts);
+  }
+
+  async getConfiguration(): Promise<ConfigurationResponse> {
+    return this.executions.getConfiguration();
   }
 }
 

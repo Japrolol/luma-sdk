@@ -3,7 +3,7 @@
 TypeScript SDK for the Luma platform used by Mentingo.
 
 It provides two separate clients:
-- HTTP client for public API operations (drafts, ingestion, chat, assets)
+- HTTP client for public API operations (drafts, ingestion, chat, assets, configuration)
 - Socket client for realtime audio/voice mentor flows
 
 ## Installation
@@ -98,6 +98,7 @@ Methods:
 - `getGeneratedCourse(opts)`
 - `deleteDraft(opts)`
 - `getAssets(opts)`
+- `getConfiguration()`
 
 ## Socket Client API
 

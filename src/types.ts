@@ -1,10 +1,11 @@
 import type {
   ArchitectCourseResponse,
+  AssetResponse,
   BodyIngestApiPublicV1DraftIngestIntegrationIdPost,
   CreateDraft,
-  DraftMessageResponse,
   DraftFilesResponseBody,
-  Message, AssetResponse,
+  DraftMessageResponse,
+  Message,
 } from "./api/generated-api";
 export type {
   CreateDraftResponse,
@@ -26,6 +27,7 @@ export type DraftMessage = DraftMessageResponse;
 export type DraftMessagesResponse = DraftMessage[];
 export type GeneratedCourseResponse = ArchitectCourseResponse;
 export type AssetsResponse = AssetResponse[];
+export type ConfigurationResponse = Record<string, boolean>;
 
 export type IngestDraftFileOptions = IntegrationIdOptions &
   BodyIngestApiPublicV1DraftIngestIntegrationIdPost;

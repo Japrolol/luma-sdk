@@ -130,6 +130,40 @@
         }
       }
     },
+    "/api/public/v1/ai/configuration": {
+      "get": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Get Public API Configuration Status",
+        "description": "Returns whether required API-key-scoped provider secrets are configured for course generation and voice mentor.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
+        "operationId": "get_configuration_status_api_public_v1_ai_configuration_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "type": "object",
+                  "title": "Response Get Configuration Status Api Public V1 Ai Configuration Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
     "/api/public/v1/draft": {
       "post": {
         "tags": [

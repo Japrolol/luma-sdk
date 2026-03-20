@@ -501,6 +501,26 @@ export class API<
       }),
 
     /**
+     * @description Returns whether required API-key-scoped provider secrets are configured for course generation and voice mentor. Authorization header required: `X-API-Key: <luma_api_key>`.
+     *
+     * @tags Public - Require API Key
+     * @name GetConfigurationStatusApiPublicV1AiConfigurationGet
+     * @summary Get Public API Configuration Status
+     * @request GET:/api/public/v1/ai/configuration
+     * @secure
+     */
+    getConfigurationStatusApiPublicV1AiConfigurationGet: (
+      params: RequestParams = {},
+    ) =>
+      this.request<Record<string, boolean>, void>({
+        path: `/api/public/v1/ai/configuration`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Creates a draft for a given `integration_id` (the external course identifier you are building a draft for) under the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
      *
      * @tags Public - Require API Key
