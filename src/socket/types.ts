@@ -53,6 +53,9 @@ export type AudioBinaryChunk = ArrayBuffer | Uint8Array | Buffer;
 export type StartAudioPayload = {
   type: (typeof LUMA_SOCKET_MESSAGE_TYPES)["AUDIO_START"];
   audioAction: (typeof LUMA_AUDIO_ACTIONS)["VOICE_MENTOR"];
+  language: string;
+  preset?: string;
+  customTTSReference?: string;
   meta: {
     sr: number;
     channels: number;
