@@ -46,6 +46,7 @@ export const LUMA_SOCKET_EMIT_EVENTS = {
   MENTOR_TEXT_END: "mentor_text_end",
   MENTOR_TEXT_ERROR: "mentor_text_error",
   PING: "ping",
+  TRIGGER_TTS: "trigger_tts",
 } as const;
 
 export type AudioBinaryChunk = ArrayBuffer | Uint8Array | Buffer;
@@ -97,6 +98,10 @@ export type MentorTextErrorPayload = {
   message: string;
   retryable?: boolean;
 };
+
+export type AudioTriggerTTSPayload = {
+  content: string;
+}
 
 export type ServerConnectedPayload = {
   sid: string;
@@ -187,26 +192,43 @@ export type LumaSocketEmitEvents = {
   [LUMA_SOCKET_EMIT_EVENTS.MENTOR_TEXT_END]: (payload: MentorTextEndPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.MENTOR_TEXT_ERROR]: (payload: MentorTextErrorPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.PING]: (payload?: unknown) => void;
+  [LUMA_SOCKET_EMIT_EVENTS.TRIGGER_TTS]: (payload?: AudioTriggerTTSPayload) => void;
 };
 
 type LumaSocketBase = Socket<LumaSocketListenEvents, LumaSocketEmitEvents>;
 
 export interface LumaSocket extends LumaSocketBase {
   startAudio(payload: StartAudioPayload): this;
+
   sendAudioChunk(payload: AudioChunkPayload, chunk: AudioBinaryChunk): this;
+
   stopAudio(payload?: AudioStopPayload): this;
+
   sendMentorTextDelta(payload: MentorTextDeltaPayload): this;
+
   sendMentorTextEnd(payload: MentorTextEndPayload): this;
+
   sendMentorTextError(payload: MentorTextErrorPayload): this;
+
   sendPing(payload?: unknown): this;
 
+  sendTTSTrigger(payload: AudioTriggerTTSPayload): this;
+
   onServerConnected(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.SERVER_CONNECTED]): this;
+
   onAudioStarted(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STARTED]): this;
+
   onAudioChunked(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNKED]): this;
+
   onAudioStopped(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED]): this;
+
   onMentorTranscription(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION]): this;
+
   onAudioOutputChunk(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK]): this;
+
   onAudioOutputInterrupted(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_INTERRUPTED]): this;
+
   onAudioOutputError(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ERROR]): this;
+
   onAudioOutputComplete(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_COMPLETE]): this;
 }

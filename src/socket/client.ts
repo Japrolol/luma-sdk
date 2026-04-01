@@ -11,7 +11,7 @@ import {
   MentorTextDeltaPayload,
   MentorTextEndPayload,
   MentorTextErrorPayload,
-  StartAudioPayload,
+  StartAudioPayload, AudioTriggerTTSPayload,
 } from "./types";
 
 export type LumaSocketClientOptions = {
@@ -74,6 +74,11 @@ export const createLumaSocket = (opts: LumaSocketClientOptions): LumaSocket => {
 
   socket.sendPing = (payload?: unknown) => {
     socket.emit(LUMA_SOCKET_EMIT_EVENTS.PING, payload);
+    return socket;
+  };
+
+  socket.sendTTSTrigger = (payload: AudioTriggerTTSPayload) => {
+    socket.emit(LUMA_SOCKET_EMIT_EVENTS.TRIGGER_TTS, payload);
     return socket;
   };
 
