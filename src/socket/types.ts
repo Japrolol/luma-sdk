@@ -49,6 +49,11 @@ export const LUMA_SOCKET_EMIT_EVENTS = {
   TRIGGER_TTS: "trigger_tts",
 } as const;
 
+export const TRANSCRIPTION_MODES = {
+  PAUSE_BATCH: "pause_batch",
+  REALTIME_STREAM: "realtime_stream",
+} as const;
+
 export type AudioBinaryChunk = ArrayBuffer | Uint8Array | Buffer;
 
 export type StartAudioPayload = {
@@ -62,6 +67,7 @@ export type StartAudioPayload = {
     channels: number;
     format: (typeof LUMA_AUDIO_FORMATS)["PCM_S16LE"];
   };
+  transcriptionMode: (typeof TRANSCRIPTION_MODES)[keyof typeof TRANSCRIPTION_MODES]
 };
 
 export type AudioChunkPayload = {
