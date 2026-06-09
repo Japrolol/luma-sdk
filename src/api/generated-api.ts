@@ -73,6 +73,8 @@ export interface ArchitectQuizOption {
   optionText: string;
   /** Iscorrect */
   isCorrect: boolean;
+  /** Blankanswerid */
+  blankAnswerId?: string | null;
   [key: string]: any;
 }
 
@@ -127,8 +129,11 @@ export interface CreateDraft {
    * @format uuid
    */
   integrationId: string;
-  /** Courselanguage */
-  courseLanguage: string;
+  /**
+   * Courselanguage
+   * @default "en"
+   */
+  courseLanguage?: string;
   /** Draftname */
   draftName: string;
 }

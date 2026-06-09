@@ -98,7 +98,42 @@ Methods:
 - `getGeneratedCourse(opts)`
 - `deleteDraft(opts)`
 - `getAssets(opts)`
+- `getGeneratedCourseBundle(opts)`
 - `getConfiguration()`
+
+## Course Generation Completion
+
+Luma emits `course.generated` when the final generated course artifact is ready to fetch. After this event, callers should fetch the final course and ready generated assets:
+
+```ts
+import {
+  createLumaClient,
+  isLumaCourseGeneratedEvent,
+  LUMA_COURSE_GENERATION_STREAM_EVENT_TYPES,
+} from "@japro/luma-sdk";
+
+const client = createLumaClient({ baseURL, apiKey });
+
+if (isLumaCourseGeneratedEvent(event)) {
+  const { course, assets } = await client.getGeneratedCourseBundle({
+    integrationId: "course-123",
+  });
+}
+
+console.log(LUMA_COURSE_GENERATION_STREAM_EVENT_TYPES.COURSE_GENERATED);
+```
+
+Progress streams may also include `designer.chapter.generated`, `architect.lesson.generated`, and `asset.requested`. These are preview/progress events; `course.generated` is the final artifact-ready event.
+
+Ready generated assets are referenced in the final course HTML as import markers:
+
+```html
+<div data-node-type="luma-asset" data-asset-id="<asset_id>"></div>
+```
+
+These markers are not renderable UI. Consumers should map `data-asset-id` to `assetId` from `getAssets` or `getGeneratedCourseBundle`, copy/import the signed URL into their own storage, and replace the marker with their native resource node. Signed URLs are temporary and should not be stored durably.
+
+`loading-ai-asset` nodes are preview-only placeholders and should not appear in the final generated course. FillInTheBlanks and GapFill content can contain `<blank-answer-<id>>` tags; matching quiz options expose `blankAnswerId` and consumers should preserve that value during import.
 
 ## Socket Client API
 

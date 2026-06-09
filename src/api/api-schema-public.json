@@ -815,6 +815,17 @@
           "isCorrect": {
             "type": "boolean",
             "title": "Iscorrect"
+          },
+          "blankAnswerId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blankanswerid"
           }
         },
         "additionalProperties": true,
@@ -940,7 +951,8 @@
           },
           "courseLanguage": {
             "type": "string",
-            "title": "Courselanguage"
+            "title": "Courselanguage",
+            "default": "en"
           },
           "draftName": {
             "type": "string",
@@ -950,7 +962,6 @@
         "type": "object",
         "required": [
           "integrationId",
-          "courseLanguage",
           "draftName"
         ],
         "title": "CreateDraft"

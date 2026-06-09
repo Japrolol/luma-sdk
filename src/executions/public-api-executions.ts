@@ -8,6 +8,7 @@ import {
   DeleteIngestedDocumentResponse,
   DraftFilesResponse,
   DraftMessagesResponse,
+  GeneratedCourseBundleResponse,
   GeneratedCourseResponse,
   GetDraftResponse,
   IngestDraftFileOptions,
@@ -102,6 +103,17 @@ export class PublicApiExecutions {
     );
 
     return response.data;
+  }
+
+  async getGeneratedCourseBundle(
+    opts: IntegrationIdOptions,
+  ): Promise<GeneratedCourseBundleResponse> {
+    const [course, assets] = await Promise.all([
+      this.getGeneratedCourse(opts),
+      this.getAssets(opts),
+    ]);
+
+    return { course, assets };
   }
 
   async getConfiguration(): Promise<PublicConfigurationResponse> {

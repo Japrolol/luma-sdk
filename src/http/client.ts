@@ -11,6 +11,7 @@ import {
   DeleteIngestedDocumentResponse,
   DraftFilesResponse,
   DraftMessagesResponse,
+  GeneratedCourseBundleResponse,
   GeneratedCourseResponse,
   GetDraftResponse,
   IngestDraftFileOptions,
@@ -86,6 +87,12 @@ export class LumaClient {
 
   async getAssets(opts: IntegrationIdOptions): Promise<AssetsResponse> {
     return this.executions.getAssets(opts);
+  }
+
+  async getGeneratedCourseBundle(
+    opts: IntegrationIdOptions,
+  ): Promise<GeneratedCourseBundleResponse> {
+    return this.executions.getGeneratedCourseBundle(opts);
   }
 
   async getConfiguration(): Promise<PublicConfigurationResponse> {
