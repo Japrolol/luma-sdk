@@ -10,6 +10,25 @@
  * ---------------------------------------------------------------
  */
 
+/** ArchitectAiMentorLessonResponse */
+export interface ArchitectAiMentorLessonResponse {
+  /** Name */
+  name: string;
+  /** Aimentorinstructions */
+  aiMentorInstructions: string;
+  /** Relevantcontext */
+  relevantContext?: string | null;
+  /** Completionconditions */
+  completionConditions: string;
+  /** Type */
+  type: "ROLEPLAY" | "MENTOR" | "TEACHER";
+  /** Taskdescription */
+  taskDescription: string;
+  /** Ttspreset */
+  ttsPreset: "male" | "female";
+  [key: string]: any;
+}
+
 /** ArchitectChapterResponse */
 export interface ArchitectChapterResponse {
   /** Chapterindex */
@@ -56,11 +75,47 @@ export interface ArchitectLessonResponse {
   /** Content */
   content?: string | null;
   /** Questions */
-  questions?: Record<string, any>[] | null;
-  /** Aimentor */
-  aiMentor?: Record<string, any> | null;
+  questions?: ArchitectQuizQuestionResponse[] | null;
+  aiMentor?: ArchitectAiMentorLessonResponse | null;
   /** Assets */
   assets?: ArchitectLessonAssetResponse[];
+  [key: string]: any;
+}
+
+/** ArchitectQuizOptionResponse */
+export interface ArchitectQuizOptionResponse {
+  /** Optionindex */
+  optionIndex: number;
+  /** Optiontext */
+  optionText: string;
+  /** Iscorrect */
+  isCorrect: boolean;
+  /** Blankanswerid */
+  blankAnswerId?: string | null;
+  [key: string]: any;
+}
+
+/** ArchitectQuizQuestionResponse */
+export interface ArchitectQuizQuestionResponse {
+  /** Questionindex */
+  questionIndex: number;
+  /** Type */
+  type:
+    | "SingleSelect"
+    | "MultiSelect"
+    | "TrueOrFalse"
+    | "BriefResponse"
+    | "DetailedResponse"
+    | "FillInTheBlanks"
+    | "GapFill";
+  /** Title */
+  title: string;
+  /** Description */
+  description?: string | null;
+  /** Solutionexplanation */
+  solutionExplanation?: string | null;
+  /** Options */
+  options?: ArchitectQuizOptionResponse[] | null;
   [key: string]: any;
 }
 

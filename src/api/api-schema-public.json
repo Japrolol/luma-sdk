@@ -630,6 +630,65 @@
   },
   "components": {
     "schemas": {
+      "ArchitectAiMentorLessonResponse": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "aiMentorInstructions": {
+            "type": "string",
+            "title": "Aimentorinstructions"
+          },
+          "relevantContext": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relevantcontext"
+          },
+          "completionConditions": {
+            "type": "string",
+            "title": "Completionconditions"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "ROLEPLAY",
+              "MENTOR",
+              "TEACHER"
+            ],
+            "title": "Type"
+          },
+          "taskDescription": {
+            "type": "string",
+            "title": "Taskdescription"
+          },
+          "ttsPreset": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female"
+            ],
+            "title": "Ttspreset"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "name",
+          "aiMentorInstructions",
+          "completionConditions",
+          "type",
+          "taskDescription",
+          "ttsPreset"
+        ],
+        "title": "ArchitectAiMentorLessonResponse"
+      },
       "ArchitectChapterResponse": {
         "properties": {
           "chapterIndex": {
@@ -779,8 +838,7 @@
             "anyOf": [
               {
                 "items": {
-                  "additionalProperties": true,
-                  "type": "object"
+                  "$ref": "#/components/schemas/ArchitectQuizQuestionResponse"
                 },
                 "type": "array"
               },
@@ -793,14 +851,12 @@
           "aiMentor": {
             "anyOf": [
               {
-                "additionalProperties": true,
-                "type": "object"
+                "$ref": "#/components/schemas/ArchitectAiMentorLessonResponse"
               },
               {
                 "type": "null"
               }
-            ],
-            "title": "Aimentor"
+            ]
           },
           "assets": {
             "items": {
@@ -817,6 +873,110 @@
           "title"
         ],
         "title": "ArchitectLessonResponse"
+      },
+      "ArchitectQuizOptionResponse": {
+        "properties": {
+          "optionIndex": {
+            "type": "integer",
+            "title": "Optionindex"
+          },
+          "optionText": {
+            "type": "string",
+            "title": "Optiontext"
+          },
+          "isCorrect": {
+            "type": "boolean",
+            "title": "Iscorrect"
+          },
+          "blankAnswerId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blankanswerid"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "optionIndex",
+          "optionText",
+          "isCorrect"
+        ],
+        "title": "ArchitectQuizOptionResponse"
+      },
+      "ArchitectQuizQuestionResponse": {
+        "properties": {
+          "questionIndex": {
+            "type": "integer",
+            "title": "Questionindex"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "SingleSelect",
+              "MultiSelect",
+              "TrueOrFalse",
+              "BriefResponse",
+              "DetailedResponse",
+              "FillInTheBlanks",
+              "GapFill"
+            ],
+            "title": "Type"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "solutionExplanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solutionexplanation"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ArchitectQuizOptionResponse"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "questionIndex",
+          "type",
+          "title"
+        ],
+        "title": "ArchitectQuizQuestionResponse"
       },
       "AssetResponse": {
         "properties": {
