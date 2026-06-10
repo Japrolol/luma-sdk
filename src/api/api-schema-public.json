@@ -630,66 +630,7 @@
   },
   "components": {
     "schemas": {
-      "ArchitectAiMentorLesson": {
-        "properties": {
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "aiMentorInstructions": {
-            "type": "string",
-            "title": "Aimentorinstructions"
-          },
-          "relevantContext": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Relevantcontext"
-          },
-          "completionConditions": {
-            "type": "string",
-            "title": "Completionconditions"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "ROLEPLAY",
-              "MENTOR",
-              "TEACHER"
-            ],
-            "title": "Type"
-          },
-          "taskDescription": {
-            "type": "string",
-            "title": "Taskdescription"
-          },
-          "ttsPreset": {
-            "type": "string",
-            "enum": [
-              "male",
-              "female"
-            ],
-            "title": "Ttspreset"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "name",
-          "aiMentorInstructions",
-          "completionConditions",
-          "type",
-          "taskDescription",
-          "ttsPreset"
-        ],
-        "title": "ArchitectAiMentorLesson"
-      },
-      "ArchitectChapter": {
+      "ArchitectChapterResponse": {
         "properties": {
           "chapterIndex": {
             "type": "integer",
@@ -701,7 +642,7 @@
           },
           "lessons": {
             "items": {
-              "$ref": "#/components/schemas/ArchitectLesson"
+              "$ref": "#/components/schemas/ArchitectLessonResponse"
             },
             "type": "array",
             "title": "Lessons"
@@ -714,7 +655,7 @@
           "title",
           "lessons"
         ],
-        "title": "ArchitectChapter"
+        "title": "ArchitectChapterResponse"
       },
       "ArchitectCourseResponse": {
         "properties": {
@@ -728,7 +669,7 @@
           },
           "chapters": {
             "items": {
-              "$ref": "#/components/schemas/ArchitectChapter"
+              "$ref": "#/components/schemas/ArchitectChapterResponse"
             },
             "type": "array",
             "title": "Chapters"
@@ -743,7 +684,72 @@
         ],
         "title": "ArchitectCourseResponse"
       },
-      "ArchitectLesson": {
+      "ArchitectLessonAssetResponse": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "image",
+            "title": "Type"
+          },
+          "assetId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assetid"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "visualQuery": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visualquery"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "title": "ArchitectLessonAssetResponse"
+      },
+      "ArchitectLessonResponse": {
         "properties": {
           "lessonType": {
             "type": "string",
@@ -773,7 +779,8 @@
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/ArchitectQuizQuestion"
+                  "additionalProperties": true,
+                  "type": "object"
                 },
                 "type": "array"
               },
@@ -786,16 +793,18 @@
           "aiMentor": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/ArchitectAiMentorLesson"
+                "additionalProperties": true,
+                "type": "object"
               },
               {
                 "type": "null"
               }
-            ]
+            ],
+            "title": "Aimentor"
           },
           "assets": {
             "items": {
-              "$ref": "#/components/schemas/NapkinAssetItem"
+              "$ref": "#/components/schemas/ArchitectLessonAssetResponse"
             },
             "type": "array",
             "title": "Assets"
@@ -805,120 +814,9 @@
         "type": "object",
         "required": [
           "lessonType",
-          "title",
-          "content",
-          "questions",
-          "aiMentor",
-          "assets"
+          "title"
         ],
-        "title": "ArchitectLesson"
-      },
-      "ArchitectQuizOption": {
-        "properties": {
-          "optionIndex": {
-            "type": "integer",
-            "title": "Optionindex"
-          },
-          "optionText": {
-            "type": "string",
-            "title": "Optiontext"
-          },
-          "isCorrect": {
-            "type": "boolean",
-            "title": "Iscorrect"
-          },
-          "blankAnswerId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Blankanswerid"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "optionIndex",
-          "optionText",
-          "isCorrect"
-        ],
-        "title": "ArchitectQuizOption"
-      },
-      "ArchitectQuizQuestion": {
-        "properties": {
-          "questionIndex": {
-            "type": "integer",
-            "title": "Questionindex"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "SingleSelect",
-              "MultiSelect",
-              "TrueOrFalse",
-              "BriefResponse",
-              "DetailedResponse",
-              "FillInTheBlanks",
-              "GapFill"
-            ],
-            "title": "Type"
-          },
-          "title": {
-            "type": "string",
-            "title": "Title"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "solutionExplanation": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Solutionexplanation"
-          },
-          "options": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/ArchitectQuizOption"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Options"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "questionIndex",
-          "type",
-          "title",
-          "description",
-          "solutionExplanation",
-          "options"
-        ],
-        "title": "ArchitectQuizQuestion"
+        "title": "ArchitectLessonResponse"
       },
       "AssetResponse": {
         "properties": {
@@ -1173,49 +1071,6 @@
           "message"
         ],
         "title": "Message"
-      },
-      "NapkinAssetItem": {
-        "properties": {
-          "type": {
-            "type": "string",
-            "const": "image",
-            "title": "Type",
-            "description": "Asset type. Currently only image is supported."
-          },
-          "content": {
-            "type": "string",
-            "maxLength": 220,
-            "minLength": 1,
-            "title": "Content",
-            "description": "Short semantic prompt for the image. Keep concise to reduce token usage while preserving the core meaning."
-          },
-          "visual_query": {
-            "type": "string",
-            "maxLength": 80,
-            "minLength": 1,
-            "title": "Visual Query",
-            "description": "Requested visual format/style as text (e.g., flowchart, mindmap, timeline, system diagram)."
-          },
-          "priority": {
-            "type": "string",
-            "enum": [
-              "high",
-              "medium",
-              "low"
-            ],
-            "title": "Priority",
-            "description": "high: absolutely necessary for lesson comprehension; medium: helpful/nice to have; low: not necessary for the lesson."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "type",
-          "content",
-          "visual_query",
-          "priority"
-        ],
-        "title": "NapkinAssetItem"
       },
       "PublicConfigurationResponse": {
         "properties": {

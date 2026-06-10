@@ -10,33 +10,14 @@
  * ---------------------------------------------------------------
  */
 
-/** ArchitectAiMentorLesson */
-export interface ArchitectAiMentorLesson {
-  /** Name */
-  name: string;
-  /** Aimentorinstructions */
-  aiMentorInstructions: string;
-  /** Relevantcontext */
-  relevantContext?: string | null;
-  /** Completionconditions */
-  completionConditions: string;
-  /** Type */
-  type: "ROLEPLAY" | "MENTOR" | "TEACHER";
-  /** Taskdescription */
-  taskDescription: string;
-  /** Ttspreset */
-  ttsPreset: "male" | "female";
-  [key: string]: any;
-}
-
-/** ArchitectChapter */
-export interface ArchitectChapter {
+/** ArchitectChapterResponse */
+export interface ArchitectChapterResponse {
   /** Chapterindex */
   chapterIndex: number;
   /** Title */
   title: string;
   /** Lessons */
-  lessons: ArchitectLesson[];
+  lessons: ArchitectLessonResponse[];
   [key: string]: any;
 }
 
@@ -47,60 +28,39 @@ export interface ArchitectCourseResponse {
   /** Description */
   description: string;
   /** Chapters */
-  chapters: ArchitectChapter[];
+  chapters: ArchitectChapterResponse[];
   [key: string]: any;
 }
 
-/** ArchitectLesson */
-export interface ArchitectLesson {
+/** ArchitectLessonAssetResponse */
+export interface ArchitectLessonAssetResponse {
+  /** Type */
+  type: "image";
+  /** Assetid */
+  assetId?: string | null;
+  /** Content */
+  content?: string | null;
+  /** Visualquery */
+  visualQuery?: string | null;
+  /** Priority */
+  priority?: "high" | "medium" | "low" | null;
+  [key: string]: any;
+}
+
+/** ArchitectLessonResponse */
+export interface ArchitectLessonResponse {
   /** Lessontype */
   lessonType: "AI_MENTOR" | "CONTENT" | "QUIZ";
   /** Title */
   title: string;
   /** Content */
-  content: string | null;
+  content?: string | null;
   /** Questions */
-  questions: ArchitectQuizQuestion[] | null;
-  aiMentor: ArchitectAiMentorLesson | null;
+  questions?: Record<string, any>[] | null;
+  /** Aimentor */
+  aiMentor?: Record<string, any> | null;
   /** Assets */
-  assets: NapkinAssetItem[];
-  [key: string]: any;
-}
-
-/** ArchitectQuizOption */
-export interface ArchitectQuizOption {
-  /** Optionindex */
-  optionIndex: number;
-  /** Optiontext */
-  optionText: string;
-  /** Iscorrect */
-  isCorrect: boolean;
-  /** Blankanswerid */
-  blankAnswerId?: string | null;
-  [key: string]: any;
-}
-
-/** ArchitectQuizQuestion */
-export interface ArchitectQuizQuestion {
-  /** Questionindex */
-  questionIndex: number;
-  /** Type */
-  type:
-    | "SingleSelect"
-    | "MultiSelect"
-    | "TrueOrFalse"
-    | "BriefResponse"
-    | "DetailedResponse"
-    | "FillInTheBlanks"
-    | "GapFill";
-  /** Title */
-  title: string;
-  /** Description */
-  description: string | null;
-  /** Solutionexplanation */
-  solutionExplanation: string | null;
-  /** Options */
-  options: ArchitectQuizOption[] | null;
+  assets?: ArchitectLessonAssetResponse[];
   [key: string]: any;
 }
 
@@ -237,34 +197,6 @@ export interface IngestDraftResponse {
 export interface Message {
   /** Message */
   message: string;
-}
-
-/** NapkinAssetItem */
-export interface NapkinAssetItem {
-  /**
-   * Type
-   * Asset type. Currently only image is supported.
-   */
-  type: "image";
-  /**
-   * Content
-   * Short semantic prompt for the image. Keep concise to reduce token usage while preserving the core meaning.
-   * @minLength 1
-   * @maxLength 220
-   */
-  content: string;
-  /**
-   * Visual Query
-   * Requested visual format/style as text (e.g., flowchart, mindmap, timeline, system diagram).
-   * @minLength 1
-   * @maxLength 80
-   */
-  visual_query: string;
-  /**
-   * Priority
-   * high: absolutely necessary for lesson comprehension; medium: helpful/nice to have; low: not necessary for the lesson.
-   */
-  priority: "high" | "medium" | "low";
 }
 
 /** PublicConfigurationResponse */
