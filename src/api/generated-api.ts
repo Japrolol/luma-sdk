@@ -16,6 +16,8 @@ export interface ArchitectAiMentorLesson {
   name: string;
   /** Aimentorinstructions */
   aiMentorInstructions: string;
+  /** Relevantcontext */
+  relevantContext?: string | null;
   /** Completionconditions */
   completionConditions: string;
   /** Type */

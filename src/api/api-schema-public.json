@@ -640,6 +640,17 @@
             "type": "string",
             "title": "Aimentorinstructions"
           },
+          "relevantContext": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relevantcontext"
+          },
           "completionConditions": {
             "type": "string",
             "title": "Completionconditions"
