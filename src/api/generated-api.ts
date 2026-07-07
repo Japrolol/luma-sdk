@@ -10,6 +10,56 @@
  * ---------------------------------------------------------------
  */
 
+/** AiRuntimeResolutionErrorCode */
+export enum AiRuntimeResolutionErrorCode {
+  ApiKeyNotFound = "api_key_not_found",
+  DomainNotSupported = "domain_not_supported",
+  ModeNotAllowed = "mode_not_allowed",
+  CustomProfileRequired = "custom_profile_required",
+  CustomProfileNotFound = "custom_profile_not_found",
+  CustomProfileKindMismatch = "custom_profile_kind_mismatch",
+  CustomProfileSecretMissing = "custom_profile_secret_missing",
+  CoreProviderKeyMissing = "core_provider_key_missing",
+  Disabled = "disabled",
+}
+
+/** AiCapabilityProvider */
+export enum AiCapabilityProvider {
+  Luma = "luma",
+  MentingoCore = "mentingo-core",
+}
+
+/** AiCapabilityMode */
+export enum AiCapabilityMode {
+  Core = "core",
+  Custom = "custom",
+  Disabled = "disabled",
+}
+
+/** AiCapability */
+export enum AiCapability {
+  CourseGeneration = "courseGeneration",
+  CourseGenerationVisualAssets = "courseGenerationVisualAssets",
+  CourseGenerationEmbeddings = "courseGenerationEmbeddings",
+  AiMentorChat = "aiMentorChat",
+  AiMentorJudge = "aiMentorJudge",
+  AiMentorRagEmbeddings = "aiMentorRagEmbeddings",
+  TranslationGeneration = "translationGeneration",
+  DictationTranscription = "dictationTranscription",
+  VoiceTranscription = "voiceTranscription",
+  VoiceMentor = "voiceMentor",
+  VoiceTextToSpeech = "voiceTextToSpeech",
+}
+
+/** AiCapabilityStatus */
+export interface AiCapabilityStatus {
+  /** Enabled */
+  enabled: boolean;
+  mode: AiCapabilityMode;
+  provider: AiCapabilityProvider | null;
+  reason?: AiRuntimeResolutionErrorCode | null;
+}
+
 /** ArchitectAiMentorLessonResponse */
 export interface ArchitectAiMentorLessonResponse {
   /** Name */
@@ -139,6 +189,15 @@ export interface BodyIngestApiPublicV1DraftIngestIntegrationIdPost {
   file: File;
 }
 
+/** Body_transcribe_dictation_api_public_v1_ai_transcriptions_post */
+export interface BodyTranscribeDictationApiPublicV1AiTranscriptionsPost {
+  /**
+   * File
+   * @format binary
+   */
+  file: File;
+}
+
 /** CreateDraft */
 export interface CreateDraft {
   /**
@@ -221,6 +280,18 @@ export interface DraftMessageResponse {
   updatedAt: string;
 }
 
+/** EmbeddingsRequest */
+export interface EmbeddingsRequest {
+  /** Texts */
+  texts: string[];
+}
+
+/** EmbeddingsResponse */
+export interface EmbeddingsResponse {
+  /** Embeddings */
+  embeddings: number[][];
+}
+
 /** GetDraftResponse */
 export interface GetDraftResponse {
   /**
@@ -248,10 +319,50 @@ export interface IngestDraftResponse {
   jobId?: string | null;
 }
 
+/** JudgeResponse */
+export interface JudgeResponse {
+  /** Summary */
+  summary: string;
+  /** Passed */
+  passed: boolean;
+  /** Minscore */
+  minScore: number;
+  /** Score */
+  score: number;
+  /** Maxscore */
+  maxScore: number;
+  /** Percentage */
+  percentage: number;
+}
+
+/** MentorChatRequest */
+export interface MentorChatRequest {
+  /** Messages */
+  messages: PublicAiMessage[];
+  /** Temperature */
+  temperature?: number | null;
+  /** Voicesessionid */
+  voiceSessionId?: string | null;
+}
+
+/** MentorChatResponse */
+export interface MentorChatResponse {
+  /** Message */
+  message: string;
+}
+
 /** Message */
 export interface Message {
   /** Message */
   message: string;
+}
+
+/** PublicAiMessage */
+export interface PublicAiMessage {
+  /** Role */
+  role: "system" | "user" | "assistant";
+  /** Content */
+  content: string;
 }
 
 /** PublicConfigurationResponse */
@@ -260,6 +371,30 @@ export interface PublicConfigurationResponse {
   courseGeneration: boolean;
   /** Voicementor */
   voiceMentor: boolean;
+  /** Enabled */
+  enabled: boolean;
+  /** Capabilities */
+  capabilities: Record<AiCapability, AiCapabilityStatus>;
+}
+
+/** StructuredGenerationRequest */
+export interface StructuredGenerationRequest {
+  /** Messages */
+  messages: PublicAiMessage[];
+  /** Temperature */
+  temperature?: number | null;
+}
+
+/** TranscriptionResponse */
+export interface TranscriptionResponse {
+  /** Text */
+  text: string;
+}
+
+/** TranslationResponse */
+export interface TranslationResponse {
+  /** Translations */
+  translations: string[];
 }
 
 /** ValidationError */
@@ -287,8 +422,10 @@ import axios from "axios";
 
 export type QueryParamsType = Record<string | number, any>;
 
-export interface FullRequestParams
-  extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
+export interface FullRequestParams extends Omit<
+  AxiosRequestConfig,
+  "data" | "params" | "url" | "responseType"
+> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -303,13 +440,12 @@ export interface FullRequestParams
   body?: unknown;
 }
 
-export type RequestParams = Omit<
-  FullRequestParams,
-  "body" | "method" | "query" | "path"
->;
+export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
 
-export interface ApiConfig<SecurityDataType = unknown>
-  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+export interface ApiConfig<SecurityDataType = unknown> extends Omit<
+  AxiosRequestConfig,
+  "data" | "cancelToken"
+> {
   securityWorker?: (
     securityData: SecurityDataType | null,
   ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
@@ -363,9 +499,7 @@ export class HttpClient<SecurityDataType = unknown> {
       ...(params2 || {}),
       headers: {
         ...((method &&
-          this.instance.defaults.headers[
-            method.toLowerCase() as keyof HeadersDefaults
-          ]) ||
+          this.instance.defaults.headers[method.toLowerCase() as keyof HeadersDefaults]) ||
           {}),
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
@@ -387,15 +521,11 @@ export class HttpClient<SecurityDataType = unknown> {
     }
     return Object.keys(input || {}).reduce((formData, key) => {
       const property = input[key];
-      const propertyContent: any[] =
-        property instanceof Array ? property : [property];
+      const propertyContent: any[] = property instanceof Array ? property : [property];
 
       for (const formItem of propertyContent) {
         const isFileType = formItem instanceof Blob || formItem instanceof File;
-        formData.append(
-          key,
-          isFileType ? formItem : this.stringifyFormItem(formItem),
-        );
+        formData.append(key, isFileType ? formItem : this.stringifyFormItem(formItem));
       }
 
       return formData;
@@ -419,21 +549,11 @@ export class HttpClient<SecurityDataType = unknown> {
     const requestParams = this.mergeRequestParams(params, secureParams);
     const responseFormat = format || this.format || undefined;
 
-    if (
-      type === ContentType.FormData &&
-      body &&
-      body !== null &&
-      typeof body === "object"
-    ) {
+    if (type === ContentType.FormData && body && body !== null && typeof body === "object") {
       body = this.createFormData(body as Record<string, unknown>);
     }
 
-    if (
-      type === ContentType.Text &&
-      body &&
-      body !== null &&
-      typeof body !== "string"
-    ) {
+    if (type === ContentType.Text && body && body !== null && typeof body !== "string") {
       body = JSON.stringify(body);
     }
 
@@ -455,9 +575,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title Luma API
  * @version 0.1.0
  */
-export class API<
-  SecurityDataType extends unknown,
-> extends HttpClient<SecurityDataType> {
+export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   api = {
     /**
      * @description Streams AI chat responses for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
@@ -513,13 +631,145 @@ export class API<
      * @request GET:/api/public/v1/ai/configuration
      * @secure
      */
-    getConfigurationStatusApiPublicV1AiConfigurationGet: (
-      params: RequestParams = {},
-    ) =>
+    getConfigurationStatusApiPublicV1AiConfigurationGet: (params: RequestParams = {}) =>
       this.request<PublicConfigurationResponse, void>({
         path: `/api/public/v1/ai/configuration`,
         method: "GET",
         secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name MentorChatApiPublicV1AiMentorChatPost
+     * @summary Stream Mentor Chat With Custom Runtime
+     * @request POST:/api/public/v1/ai/mentor/chat
+     * @secure
+     */
+    mentorChatApiPublicV1AiMentorChatPost: (data: MentorChatRequest, params: RequestParams = {}) =>
+      this.request<void, void | HTTPValidationError>({
+        path: `/api/public/v1/ai/mentor/chat`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name GenerateMentorChatApiPublicV1AiMentorChatGeneratePost
+     * @summary Generate Mentor Chat Message With Custom Runtime
+     * @request POST:/api/public/v1/ai/mentor/chat/generate
+     * @secure
+     */
+    generateMentorChatApiPublicV1AiMentorChatGeneratePost: (
+      data: MentorChatRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<MentorChatResponse, void | HTTPValidationError>({
+        path: `/api/public/v1/ai/mentor/chat/generate`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name MentorJudgeApiPublicV1AiMentorJudgePost
+     * @summary Run AI Mentor Judge With Custom Runtime
+     * @request POST:/api/public/v1/ai/mentor/judge
+     * @secure
+     */
+    mentorJudgeApiPublicV1AiMentorJudgePost: (
+      data: StructuredGenerationRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<JudgeResponse, void | HTTPValidationError>({
+        path: `/api/public/v1/ai/mentor/judge`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name GenerateTranslationsApiPublicV1AiTranslationsGeneratePost
+     * @summary Generate Translations With Custom Runtime
+     * @request POST:/api/public/v1/ai/translations/generate
+     * @secure
+     */
+    generateTranslationsApiPublicV1AiTranslationsGeneratePost: (
+      data: StructuredGenerationRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<TranslationResponse, void | HTTPValidationError>({
+        path: `/api/public/v1/ai/translations/generate`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name CreateEmbeddingsApiPublicV1AiEmbeddingsPost
+     * @summary Create Embeddings With Custom Runtime
+     * @request POST:/api/public/v1/ai/embeddings
+     * @secure
+     */
+    createEmbeddingsApiPublicV1AiEmbeddingsPost: (
+      data: EmbeddingsRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<EmbeddingsResponse, void | HTTPValidationError>({
+        path: `/api/public/v1/ai/embeddings`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name TranscribeDictationApiPublicV1AiTranscriptionsPost
+     * @summary Transcribe Dictation Audio With Custom Runtime
+     * @request POST:/api/public/v1/ai/transcriptions
+     * @secure
+     */
+    transcribeDictationApiPublicV1AiTranscriptionsPost: (
+      data: BodyTranscribeDictationApiPublicV1AiTranscriptionsPost,
+      params: RequestParams = {},
+    ) =>
+      this.request<TranscriptionResponse, void | HTTPValidationError>({
+        path: `/api/public/v1/ai/transcriptions`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),
@@ -533,10 +783,7 @@ export class API<
      * @request POST:/api/public/v1/draft
      * @secure
      */
-    createDraftApiPublicV1DraftPost: (
-      data: CreateDraft,
-      params: RequestParams = {},
-    ) =>
+    createDraftApiPublicV1DraftPost: (data: CreateDraft, params: RequestParams = {}) =>
       this.request<CreateDraftResponse, void | HTTPValidationError>({
         path: `/api/public/v1/draft`,
         method: "POST",
@@ -577,10 +824,7 @@ export class API<
      * @request GET:/api/public/v1/draft/{integration_id}
      * @secure
      */
-    getDraftApiPublicV1DraftIntegrationIdGet: (
-      integrationId: string,
-      params: RequestParams = {},
-    ) =>
+    getDraftApiPublicV1DraftIntegrationIdGet: (integrationId: string, params: RequestParams = {}) =>
       this.request<GetDraftResponse, void | HTTPValidationError>({
         path: `/api/public/v1/draft/${integrationId}`,
         method: "GET",

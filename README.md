@@ -3,6 +3,7 @@
 TypeScript SDK for the Luma platform used by Mentingo.
 
 It provides two separate clients:
+
 - HTTP client for public API operations (drafts, ingestion, chat, assets, configuration)
 - Socket client for realtime audio/voice mentor flows
 
@@ -26,10 +27,15 @@ const client = createLumaClient({
   apiKey: process.env.LUMA_API_KEY,
 });
 
-const draft = await client.createDraft({
+const draft = await client.courses.createDraft({
   integrationId: "course-123",
   draftName: "Cybersecurity Fundamentals",
   courseLanguage: "en",
+});
+
+await client.courses.chat({
+  integrationId: draft.integrationId,
+  message: "Generate a short course for new security analysts.",
 });
 ```
 
@@ -82,24 +88,48 @@ socket.stopAudio();
 ### `createLumaClient(opts)`
 
 Options:
+
 - `baseURL?: string` - Luma API base URL.
 - `apiKey?: string` - API key sent as `X-API-Key`.
 - `httpsAgent?: Agent` - custom Node.js HTTPS agent.
 - `allowInsecureTls?: boolean` - if `true`, uses `rejectUnauthorized: false` (dev only).
 
-Methods:
-- `chat(opts)`
-- `createDraft(opts)`
-- `ingestDraftFile(opts)`
-- `deleteIngestedDocument(opts)`
-- `getDraftFiles(opts)`
-- `getDraft(opts)`
-- `getDraftMessages(opts)`
-- `getGeneratedCourse(opts)`
-- `deleteDraft(opts)`
-- `getAssets(opts)`
-- `getGeneratedCourseBundle(opts)`
-- `getConfiguration()`
+Namespaces:
+
+- `client.courses.chat(opts)` - stream the public course-generation chat endpoint.
+- `client.courses.createDraft(opts)`
+- `client.courses.ingestFile(opts)`
+- `client.courses.deleteIngestedDocument(opts)`
+- `client.courses.getDraftFiles(opts)`
+- `client.courses.getDraft(opts)`
+- `client.courses.getDraftMessages(opts)`
+- `client.courses.getGeneratedCourse(opts)`
+- `client.courses.getGeneratedCourseBundle(opts)`
+- `client.courses.getAssets(opts)`
+- `client.courses.deleteDraft(opts)`
+- `client.mentor.streamChat(opts)` - stream mentor chat through the public custom-runtime endpoint. Pass `voiceSessionId` for voice mentor sessions so Luma can forward mentor text directly to the voice session.
+- `client.mentor.chat(opts)` - alias for `client.mentor.streamChat(opts)`.
+- `client.mentor.generateChat(opts)` - generate a non-stream mentor chat response.
+- `client.mentor.judge(opts)`
+- `client.ai.createEmbeddings(opts)`
+- `client.ai.generateTranslations(opts)`
+- `client.ai.transcribeDictation(opts)`
+- `client.configuration.get()`
+
+The HTTP client intentionally exposes public API operations through namespaces
+instead of flat top-level methods.
+
+## Runtime Configuration
+
+Use `client.configuration.get()` to inspect which public AI capabilities are enabled
+for the API key. The SDK exports `AiCapability`, `AiCapabilityMode`,
+`AiCapabilityProvider`, `AiRuntimeConfiguration`, and convenience constants such as
+`LUMA_AI_CAPABILITIES` and `LUMA_AI_CAPABILITY_MODES`.
+
+Custom model names should use the backend `provider:model` format, for example
+`openai:gpt-4.1-mini` or `ollama:llama3.1`.
+
+For voice mentor flows, use `client.mentor.streamChat({ ..., voiceSessionId })` so streamed mentor text can be forwarded to the active socket session without a separate polling or relay step. Use `client.mentor.generateChat(opts)` only for normal one-shot text responses.
 
 ## Course Generation Completion
 
@@ -115,7 +145,7 @@ import {
 const client = createLumaClient({ baseURL, apiKey });
 
 if (isLumaCourseGeneratedEvent(event)) {
-  const { course, assets } = await client.getGeneratedCourseBundle({
+  const { course, assets } = await client.courses.getGeneratedCourseBundle({
     integrationId: "course-123",
   });
 }
@@ -140,12 +170,14 @@ These markers are not renderable UI. Consumers should map `data-asset-id` to `as
 ### `createLumaSocket(opts)`
 
 Options:
+
 - `baseURL?: string`
 - `apiKey?: string`
 - `allowInsecureTls?: boolean`
 - `socketData?: { sessionId?: string; userId?: string; lessonId?: string }`
 
 Emit helpers:
+
 - `startAudio(payload)` -> emits `start_audio`
 - `sendAudioChunk(payload, chunk)` -> emits `audio_chunk`
 - `stopAudio(payload?)` -> emits `audio_stop`
@@ -155,6 +187,7 @@ Emit helpers:
 - `sendPing(payload?)` -> emits `ping`
 
 Listener helpers:
+
 - `onServerConnected(handler)` -> listens `server:connected`
 - `onAudioStarted(handler)` -> listens `audio:started`
 - `onAudioChunked(handler)` -> listens `audio:chunked`
@@ -167,7 +200,7 @@ Listener helpers:
 
 ## Public Exports
 
-- HTTP: `createLumaClient`, `LumaClient`, `LumaClientOptions`
+- HTTP: `createLumaClient`, `LumaClient`, `LumaClientOptions`, namespaced HTTP clients
 - Socket: `createLumaSocket`, `LumaSocket`, socket payload/event types from `src/socket/types.ts`
 - Shared API/domain types from `src/types.ts`
 

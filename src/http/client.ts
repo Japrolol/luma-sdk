@@ -1,23 +1,11 @@
 import { Agent as HttpsAgent } from "node:https";
 
-import { API, DeleteDraftResponse, PublicConfigurationResponse } from "../api/generated-api";
+import { API } from "../api/generated-api";
 import { PublicApiExecutions } from "../executions/public-api-executions";
-import {
-  AssetsResponse,
-  ChatOptions,
-  CreateDraftOptions,
-  CreateDraftResponse,
-  DeleteIngestedDocumentOptions,
-  DeleteIngestedDocumentResponse,
-  DraftFilesResponse,
-  DraftMessagesResponse,
-  GeneratedCourseBundleResponse,
-  GeneratedCourseResponse,
-  GetDraftResponse,
-  IngestDraftFileOptions,
-  IngestDraftFileResponse,
-  IntegrationIdOptions,
-} from "../types";
+import { LumaAiClient } from "./ai";
+import { LumaConfigurationClient } from "./configuration";
+import { LumaCoursesClient } from "./courses";
+import { LumaMentorClient } from "./mentor";
 
 export type LumaClientOptions = {
   baseURL?: string;
@@ -27,7 +15,11 @@ export type LumaClientOptions = {
 };
 
 export class LumaClient {
-  apiClient: API<unknown>;
+  readonly ai: LumaAiClient;
+  readonly configuration: LumaConfigurationClient;
+  readonly courses: LumaCoursesClient;
+  readonly mentor: LumaMentorClient;
+  private readonly apiClient: API<unknown>;
   private readonly executions: PublicApiExecutions;
 
   constructor(opts: LumaClientOptions) {
@@ -45,58 +37,10 @@ export class LumaClient {
     });
 
     this.executions = new PublicApiExecutions(this.apiClient);
-  }
-
-  async chat(opts: ChatOptions): ReturnType<PublicApiExecutions["chat"]> {
-    return this.executions.chat(opts);
-  }
-
-  async createDraft(opts: CreateDraftOptions): Promise<CreateDraftResponse> {
-    return this.executions.createDraft(opts);
-  }
-
-  async ingestDraftFile(opts: IngestDraftFileOptions): Promise<IngestDraftFileResponse> {
-    return this.executions.ingestDraftFile(opts);
-  }
-
-  async deleteIngestedDocument(
-    opts: DeleteIngestedDocumentOptions,
-  ): Promise<DeleteIngestedDocumentResponse> {
-    return this.executions.deleteIngestedDocument(opts);
-  }
-
-  async getDraftFiles(opts: IntegrationIdOptions): Promise<DraftFilesResponse> {
-    return this.executions.getDraftFiles(opts);
-  }
-
-  async getDraft(opts: IntegrationIdOptions): Promise<GetDraftResponse> {
-    return this.executions.getDraft(opts);
-  }
-
-  async getDraftMessages(opts: IntegrationIdOptions): Promise<DraftMessagesResponse> {
-    return this.executions.getDraftMessages(opts);
-  }
-
-  async getGeneratedCourse(opts: IntegrationIdOptions): Promise<GeneratedCourseResponse> {
-    return this.executions.getGeneratedCourse(opts);
-  }
-
-  async deleteDraft(opts: IntegrationIdOptions): Promise<DeleteDraftResponse> {
-    return this.executions.deleteDraft(opts);
-  }
-
-  async getAssets(opts: IntegrationIdOptions): Promise<AssetsResponse> {
-    return this.executions.getAssets(opts);
-  }
-
-  async getGeneratedCourseBundle(
-    opts: IntegrationIdOptions,
-  ): Promise<GeneratedCourseBundleResponse> {
-    return this.executions.getGeneratedCourseBundle(opts);
-  }
-
-  async getConfiguration(): Promise<PublicConfigurationResponse> {
-    return this.executions.getConfiguration();
+    this.ai = new LumaAiClient(this.apiClient);
+    this.configuration = new LumaConfigurationClient(this.executions);
+    this.courses = new LumaCoursesClient(this.executions);
+    this.mentor = new LumaMentorClient(this.apiClient);
   }
 }
 

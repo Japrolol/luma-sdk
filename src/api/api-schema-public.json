@@ -7,9 +7,7 @@
   "paths": {
     "/api/public/v1/ai/chat/{integration_id}": {
       "post": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Chat With Draft By Integration ID",
         "description": "Streams AI chat responses for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "chat_api_public_v1_ai_chat__integration_id__post",
@@ -73,9 +71,7 @@
     },
     "/api/public/v1/ai/assets/{integration_id}": {
       "get": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Get Draft Assets By Integration ID",
         "description": "Returns only ready AI assets (successfully generated and uploaded) for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_assets_api_public_v1_ai_assets__integration_id__get",
@@ -132,9 +128,7 @@
     },
     "/api/public/v1/ai/configuration": {
       "get": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Get Public API Configuration Status",
         "description": "Returns whether required API-key-scoped provider secrets are configured for course generation and voice mentor.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_configuration_status_api_public_v1_ai_configuration_get",
@@ -160,11 +154,302 @@
         ]
       }
     },
+    "/api/public/v1/ai/mentor/chat": {
+      "post": {
+        "tags": ["Public - Require API Key"],
+        "summary": "Stream Mentor Chat With Custom Runtime",
+        "operationId": "mentor_chat_api_public_v1_ai_mentor_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MentorChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/public/v1/ai/mentor/chat/generate": {
+      "post": {
+        "tags": ["Public - Require API Key"],
+        "summary": "Generate Mentor Chat Message With Custom Runtime",
+        "operationId": "generate_mentor_chat_api_public_v1_ai_mentor_chat_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MentorChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MentorChatResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/public/v1/ai/mentor/judge": {
+      "post": {
+        "tags": ["Public - Require API Key"],
+        "summary": "Run AI Mentor Judge With Custom Runtime",
+        "operationId": "mentor_judge_api_public_v1_ai_mentor_judge_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StructuredGenerationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JudgeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/public/v1/ai/translations/generate": {
+      "post": {
+        "tags": ["Public - Require API Key"],
+        "summary": "Generate Translations With Custom Runtime",
+        "operationId": "generate_translations_api_public_v1_ai_translations_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StructuredGenerationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/public/v1/ai/embeddings": {
+      "post": {
+        "tags": ["Public - Require API Key"],
+        "summary": "Create Embeddings With Custom Runtime",
+        "operationId": "create_embeddings_api_public_v1_ai_embeddings_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmbeddingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/public/v1/ai/transcriptions": {
+      "post": {
+        "tags": ["Public - Require API Key"],
+        "summary": "Transcribe Dictation Audio With Custom Runtime",
+        "operationId": "transcribe_dictation_api_public_v1_ai_transcriptions_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_transcribe_dictation_api_public_v1_ai_transcriptions_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranscriptionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
     "/api/public/v1/draft": {
       "post": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Create Draft By Integration ID",
         "description": "Creates a draft for a given `integration_id` (the external course identifier you are building a draft for) under the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "create_draft_api_public_v1_draft_post",
@@ -215,9 +500,7 @@
     },
     "/api/public/v1/draft/{integration_id}": {
       "delete": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Delete Draft By Integration ID",
         "description": "Deletes the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "delete_draft_api_public_v1_draft__integration_id__delete",
@@ -268,9 +551,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Get Draft Status By Integration ID",
         "description": "Fetches draft status for the provided `integration_id` (the external course identifier you are building a draft for) inside the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_draft_api_public_v1_draft__integration_id__get",
@@ -323,9 +604,7 @@
     },
     "/api/public/v1/draft/ingest/{integration_id}": {
       "post": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Ingest File To Draft By Integration ID",
         "description": "Uploads a file to the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "ingest_api_public_v1_draft_ingest__integration_id__post",
@@ -391,9 +670,7 @@
     },
     "/api/public/v1/draft/ingest/{integration_id}/{document_id}": {
       "delete": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Delete Ingested Document By Integration ID",
         "description": "Removes a previously ingested document from the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "delete_ingested_document_api_public_v1_draft_ingest__integration_id___document_id__delete",
@@ -456,9 +733,7 @@
     },
     "/api/public/v1/draft/files/{integration_id}": {
       "get": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Get Draft Files By Integration ID",
         "description": "Returns all files linked to the draft for the provided `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_draft_files_api_public_v1_draft_files__integration_id__get",
@@ -515,9 +790,7 @@
     },
     "/api/public/v1/draft/messages/{integration_id}": {
       "get": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Get Draft Messages By Integration ID",
         "description": "Returns all draft chat messages for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_draft_messages_api_public_v1_draft_messages__integration_id__get",
@@ -574,9 +847,7 @@
     },
     "/api/public/v1/draft/generated-course/{integration_id}": {
       "get": {
-        "tags": [
-          "Public - Require API Key"
-        ],
+        "tags": ["Public - Require API Key"],
         "summary": "Get Generated Course By Integration ID",
         "description": "Returns the generated course payload for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_generated_course_api_public_v1_draft_generated_course__integration_id__get",
@@ -630,6 +901,82 @@
   },
   "components": {
     "schemas": {
+      "AiCapability": {
+        "type": "string",
+        "enum": [
+          "courseGeneration",
+          "courseGenerationVisualAssets",
+          "courseGenerationEmbeddings",
+          "aiMentorChat",
+          "aiMentorJudge",
+          "aiMentorRagEmbeddings",
+          "translationGeneration",
+          "dictationTranscription",
+          "voiceTranscription",
+          "voiceMentor",
+          "voiceTextToSpeech"
+        ],
+        "title": "AiCapability"
+      },
+      "AiCapabilityMode": {
+        "type": "string",
+        "enum": ["core", "custom", "disabled"],
+        "title": "AiCapabilityMode"
+      },
+      "AiCapabilityProvider": {
+        "type": "string",
+        "enum": ["luma", "mentingo-core"],
+        "title": "AiCapabilityProvider"
+      },
+      "AiCapabilityStatus": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/AiCapabilityMode"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AiCapabilityProvider"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AiRuntimeResolutionErrorCode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["enabled", "mode", "provider"],
+        "title": "AiCapabilityStatus"
+      },
+      "AiRuntimeResolutionErrorCode": {
+        "type": "string",
+        "enum": [
+          "api_key_not_found",
+          "domain_not_supported",
+          "mode_not_allowed",
+          "custom_profile_required",
+          "custom_profile_not_found",
+          "custom_profile_kind_mismatch",
+          "custom_profile_secret_missing",
+          "core_provider_key_missing",
+          "disabled"
+        ],
+        "title": "AiRuntimeResolutionErrorCode"
+      },
       "ArchitectAiMentorLessonResponse": {
         "properties": {
           "name": {
@@ -657,11 +1004,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "ROLEPLAY",
-              "MENTOR",
-              "TEACHER"
-            ],
+            "enum": ["ROLEPLAY", "MENTOR", "TEACHER"],
             "title": "Type"
           },
           "taskDescription": {
@@ -670,10 +1013,7 @@
           },
           "ttsPreset": {
             "type": "string",
-            "enum": [
-              "male",
-              "female"
-            ],
+            "enum": ["male", "female"],
             "title": "Ttspreset"
           }
         },
@@ -709,11 +1049,7 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": [
-          "chapterIndex",
-          "title",
-          "lessons"
-        ],
+        "required": ["chapterIndex", "title", "lessons"],
         "title": "ArchitectChapterResponse"
       },
       "ArchitectCourseResponse": {
@@ -736,11 +1072,7 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": [
-          "title",
-          "description",
-          "chapters"
-        ],
+        "required": ["title", "description", "chapters"],
         "title": "ArchitectCourseResponse"
       },
       "ArchitectLessonAssetResponse": {
@@ -788,11 +1120,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "enum": [
-                  "high",
-                  "medium",
-                  "low"
-                ]
+                "enum": ["high", "medium", "low"]
               },
               {
                 "type": "null"
@@ -803,20 +1131,14 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": [
-          "type"
-        ],
+        "required": ["type"],
         "title": "ArchitectLessonAssetResponse"
       },
       "ArchitectLessonResponse": {
         "properties": {
           "lessonType": {
             "type": "string",
-            "enum": [
-              "AI_MENTOR",
-              "CONTENT",
-              "QUIZ"
-            ],
+            "enum": ["AI_MENTOR", "CONTENT", "QUIZ"],
             "title": "Lessontype"
           },
           "title": {
@@ -868,10 +1190,7 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": [
-          "lessonType",
-          "title"
-        ],
+        "required": ["lessonType", "title"],
         "title": "ArchitectLessonResponse"
       },
       "ArchitectQuizOptionResponse": {
@@ -902,11 +1221,7 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": [
-          "optionIndex",
-          "optionText",
-          "isCorrect"
-        ],
+        "required": ["optionIndex", "optionText", "isCorrect"],
         "title": "ArchitectQuizOptionResponse"
       },
       "ArchitectQuizQuestionResponse": {
@@ -971,11 +1286,7 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": [
-          "questionIndex",
-          "type",
-          "title"
-        ],
+        "required": ["questionIndex", "type", "title"],
         "title": "ArchitectQuizQuestionResponse"
       },
       "AssetResponse": {
@@ -991,10 +1302,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "assetId",
-          "signedUrl"
-        ],
+        "required": ["assetId", "signedUrl"],
         "title": "AssetResponse"
       },
       "Body_ingest_api_public_v1_draft_ingest__integration_id__post": {
@@ -1006,10 +1314,20 @@
           }
         },
         "type": "object",
-        "required": [
-          "file"
-        ],
+        "required": ["file"],
         "title": "Body_ingest_api_public_v1_draft_ingest__integration_id__post"
+      },
+      "Body_transcribe_dictation_api_public_v1_ai_transcriptions_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": ["file"],
+        "title": "Body_transcribe_dictation_api_public_v1_ai_transcriptions_post"
       },
       "CreateDraft": {
         "properties": {
@@ -1029,10 +1347,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "integrationId",
-          "draftName"
-        ],
+        "required": ["integrationId", "draftName"],
         "title": "CreateDraft"
       },
       "CreateDraftResponse": {
@@ -1044,9 +1359,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "draftId"
-        ],
+        "required": ["draftId"],
         "title": "CreateDraftResponse"
       },
       "DeleteDraftResponse": {
@@ -1057,9 +1370,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "message"
-        ],
+        "required": ["message"],
         "title": "DeleteDraftResponse"
       },
       "DeleteIngestedDocumentResponse": {
@@ -1070,9 +1381,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "message"
-        ],
+        "required": ["message"],
         "title": "DeleteIngestedDocumentResponse"
       },
       "DraftFilesResponseBody": {
@@ -1092,11 +1401,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "filename",
-          "contentType"
-        ],
+        "required": ["id", "filename", "contentType"],
         "title": "DraftFilesResponseBody"
       },
       "DraftMessageResponse": {
@@ -1147,16 +1452,39 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "draftId",
-          "role",
-          "content",
-          "contentType",
-          "createdAt",
-          "updatedAt"
-        ],
+        "required": ["id", "draftId", "role", "content", "contentType", "createdAt", "updatedAt"],
         "title": "DraftMessageResponse"
+      },
+      "EmbeddingsRequest": {
+        "properties": {
+          "texts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Texts"
+          }
+        },
+        "type": "object",
+        "required": ["texts"],
+        "title": "EmbeddingsRequest"
+      },
+      "EmbeddingsResponse": {
+        "properties": {
+          "embeddings": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Embeddings"
+          }
+        },
+        "type": "object",
+        "required": ["embeddings"],
+        "title": "EmbeddingsResponse"
       },
       "GetDraftResponse": {
         "properties": {
@@ -1171,10 +1499,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "draftId",
-          "isCourseGenerated"
-        ],
+        "required": ["draftId", "isCourseGenerated"],
         "title": "GetDraftResponse"
       },
       "HTTPValidationError": {
@@ -1213,11 +1538,86 @@
           }
         },
         "type": "object",
-        "required": [
-          "success",
-          "queued"
-        ],
+        "required": ["success", "queued"],
         "title": "IngestDraftResponse"
+      },
+      "JudgeResponse": {
+        "properties": {
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "passed": {
+            "type": "boolean",
+            "title": "Passed"
+          },
+          "minScore": {
+            "type": "integer",
+            "title": "Minscore"
+          },
+          "score": {
+            "type": "integer",
+            "title": "Score"
+          },
+          "maxScore": {
+            "type": "integer",
+            "title": "Maxscore"
+          },
+          "percentage": {
+            "type": "integer",
+            "title": "Percentage"
+          }
+        },
+        "type": "object",
+        "required": ["summary", "passed", "minScore", "score", "maxScore", "percentage"],
+        "title": "JudgeResponse"
+      },
+      "MentorChatRequest": {
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/PublicAiMessage"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature"
+          },
+          "voiceSessionId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voicesessionid"
+          }
+        },
+        "type": "object",
+        "required": ["messages"],
+        "title": "MentorChatRequest"
+      },
+      "MentorChatResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": ["message"],
+        "title": "MentorChatResponse"
       },
       "Message": {
         "properties": {
@@ -1227,10 +1627,24 @@
           }
         },
         "type": "object",
-        "required": [
-          "message"
-        ],
+        "required": ["message"],
         "title": "Message"
+      },
+      "PublicAiMessage": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": ["system", "user", "assistant"],
+            "title": "Role"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          }
+        },
+        "type": "object",
+        "required": ["role", "content"],
+        "title": "PublicAiMessage"
       },
       "PublicConfigurationResponse": {
         "properties": {
@@ -1241,14 +1655,76 @@
           "voiceMentor": {
             "type": "boolean",
             "title": "Voicementor"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "capabilities": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AiCapabilityStatus"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/AiCapability"
+            },
+            "type": "object",
+            "title": "Capabilities"
           }
         },
         "type": "object",
-        "required": [
-          "courseGeneration",
-          "voiceMentor"
-        ],
+        "required": ["courseGeneration", "voiceMentor", "enabled", "capabilities"],
         "title": "PublicConfigurationResponse"
+      },
+      "StructuredGenerationRequest": {
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/PublicAiMessage"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature"
+          }
+        },
+        "type": "object",
+        "required": ["messages"],
+        "title": "StructuredGenerationRequest"
+      },
+      "TranscriptionResponse": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": ["text"],
+        "title": "TranscriptionResponse"
+      },
+      "TranslationResponse": {
+        "properties": {
+          "translations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Translations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["translations"],
+        "title": "TranslationResponse"
       },
       "ValidationError": {
         "properties": {
@@ -1283,11 +1759,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
+        "required": ["loc", "msg", "type"],
         "title": "ValidationError"
       }
     },
