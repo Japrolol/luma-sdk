@@ -977,6 +977,102 @@
         ],
         "title": "AiRuntimeResolutionErrorCode"
       },
+      "ArchitectAiJudgeBlockingErrorResponse": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["description"],
+        "title": "ArchitectAiJudgeBlockingErrorResponse"
+      },
+      "ArchitectAiJudgeConfigurationResponse": {
+        "properties": {
+          "taskGoal": {
+            "type": "string",
+            "title": "Taskgoal"
+          },
+          "passingThresholdPercent": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Passingthresholdpercent"
+          },
+          "criteria": {
+            "items": {
+              "$ref": "#/components/schemas/ArchitectAiJudgeCriterionResponse"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Criteria"
+          },
+          "blockingErrors": {
+            "items": {
+              "$ref": "#/components/schemas/ArchitectAiJudgeBlockingErrorResponse"
+            },
+            "type": "array",
+            "title": "Blockingerrors"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["taskGoal", "passingThresholdPercent", "criteria", "blockingErrors"],
+        "title": "ArchitectAiJudgeConfigurationResponse"
+      },
+      "ArchitectAiJudgeCriterionResponse": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "expectedBehavior": {
+            "type": "string",
+            "title": "Expectedbehavior"
+          },
+          "maxScore": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Maxscore"
+          },
+          "scoreGuidance": {
+            "items": {
+              "$ref": "#/components/schemas/ArchitectAiJudgeScoreGuidanceResponse"
+            },
+            "type": "array",
+            "title": "Scoreguidance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["title", "expectedBehavior", "maxScore", "scoreGuidance"],
+        "title": "ArchitectAiJudgeCriterionResponse"
+      },
+      "ArchitectAiJudgeScoreGuidanceResponse": {
+        "properties": {
+          "score": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 0.0,
+            "title": "Score"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "example": {
+            "type": "string",
+            "title": "Example"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["score", "description", "example"],
+        "title": "ArchitectAiJudgeScoreGuidanceResponse"
+      },
       "ArchitectAiMentorLessonResponse": {
         "properties": {
           "name": {
@@ -998,9 +1094,8 @@
             ],
             "title": "Relevantcontext"
           },
-          "completionConditions": {
-            "type": "string",
-            "title": "Completionconditions"
+          "aiJudgeConfiguration": {
+            "$ref": "#/components/schemas/ArchitectAiJudgeConfigurationResponse"
           },
           "type": {
             "type": "string",
@@ -1022,7 +1117,7 @@
         "required": [
           "name",
           "aiMentorInstructions",
-          "completionConditions",
+          "aiJudgeConfiguration",
           "type",
           "taskDescription",
           "ttsPreset"
@@ -1541,36 +1636,68 @@
         "required": ["success", "queued"],
         "title": "IngestDraftResponse"
       },
-      "JudgeResponse": {
+      "JudgeCriterionResult": {
         "properties": {
-          "summary": {
+          "criterionRef": {
             "type": "string",
-            "title": "Summary"
+            "pattern": "^C[1-9]\\d*$",
+            "title": "Criterionref"
           },
-          "passed": {
-            "type": "boolean",
-            "title": "Passed"
-          },
-          "minScore": {
+          "awardedScore": {
             "type": "integer",
-            "title": "Minscore"
+            "minimum": 0.0,
+            "title": "Awardedscore"
           },
-          "score": {
-            "type": "integer",
-            "title": "Score"
-          },
-          "maxScore": {
-            "type": "integer",
-            "title": "Maxscore"
-          },
-          "percentage": {
-            "type": "integer",
-            "title": "Percentage"
+          "learnerSafeFeedback": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Learnersafefeedback"
           }
         },
+        "additionalProperties": false,
         "type": "object",
-        "required": ["summary", "passed", "minScore", "score", "maxScore", "percentage"],
+        "required": ["criterionRef", "awardedScore", "learnerSafeFeedback"],
+        "title": "JudgeCriterionResult"
+      },
+      "JudgeResponse": {
+        "properties": {
+          "criterionResults": {
+            "items": {
+              "$ref": "#/components/schemas/JudgeCriterionResult"
+            },
+            "type": "array",
+            "title": "Criterionresults"
+          },
+          "triggeredBlockingErrors": {
+            "items": {
+              "$ref": "#/components/schemas/JudgeTriggeredBlockingError"
+            },
+            "type": "array",
+            "title": "Triggeredblockingerrors"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["criterionResults", "triggeredBlockingErrors"],
         "title": "JudgeResponse"
+      },
+      "JudgeTriggeredBlockingError": {
+        "properties": {
+          "blockingErrorRef": {
+            "type": "string",
+            "pattern": "^B[1-9]\\d*$",
+            "title": "Blockingerrorref"
+          },
+          "learnerSafeFeedback": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Learnersafefeedback"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["blockingErrorRef", "learnerSafeFeedback"],
+        "title": "JudgeTriggeredBlockingError"
       },
       "MentorChatRequest": {
         "properties": {

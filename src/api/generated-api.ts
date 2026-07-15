@@ -60,6 +60,61 @@ export interface AiCapabilityStatus {
   reason?: AiRuntimeResolutionErrorCode | null;
 }
 
+/** ArchitectAiJudgeBlockingErrorResponse */
+export interface ArchitectAiJudgeBlockingErrorResponse {
+  /** Description */
+  description: string;
+}
+
+/** ArchitectAiJudgeConfigurationResponse */
+export interface ArchitectAiJudgeConfigurationResponse {
+  /** Taskgoal */
+  taskGoal: string;
+  /**
+   * Passingthresholdpercent
+   * @min 0
+   * @max 100
+   */
+  passingThresholdPercent: number;
+  /**
+   * Criteria
+   * @minItems 1
+   */
+  criteria: ArchitectAiJudgeCriterionResponse[];
+  /** Blockingerrors */
+  blockingErrors: ArchitectAiJudgeBlockingErrorResponse[];
+}
+
+/** ArchitectAiJudgeCriterionResponse */
+export interface ArchitectAiJudgeCriterionResponse {
+  /** Title */
+  title: string;
+  /** Expectedbehavior */
+  expectedBehavior: string;
+  /**
+   * Maxscore
+   * @min 1
+   * @max 5
+   */
+  maxScore: number;
+  /** Scoreguidance */
+  scoreGuidance: ArchitectAiJudgeScoreGuidanceResponse[];
+}
+
+/** ArchitectAiJudgeScoreGuidanceResponse */
+export interface ArchitectAiJudgeScoreGuidanceResponse {
+  /**
+   * Score
+   * @min 0
+   * @max 5
+   */
+  score: number;
+  /** Description */
+  description: string;
+  /** Example */
+  example: string;
+}
+
 /** ArchitectAiMentorLessonResponse */
 export interface ArchitectAiMentorLessonResponse {
   /** Name */
@@ -68,8 +123,7 @@ export interface ArchitectAiMentorLessonResponse {
   aiMentorInstructions: string;
   /** Relevantcontext */
   relevantContext?: string | null;
-  /** Completionconditions */
-  completionConditions: string;
+  aiJudgeConfiguration: ArchitectAiJudgeConfigurationResponse;
   /** Type */
   type: "ROLEPLAY" | "MENTOR" | "TEACHER";
   /** Taskdescription */
@@ -319,20 +373,45 @@ export interface IngestDraftResponse {
   jobId?: string | null;
 }
 
+/** JudgeCriterionResult */
+export interface JudgeCriterionResult {
+  /**
+   * Criterionref
+   * @pattern ^C[1-9]\d*$
+   */
+  criterionRef: string;
+  /**
+   * Awardedscore
+   * @min 0
+   */
+  awardedScore: number;
+  /**
+   * Learnersafefeedback
+   * @minLength 1
+   */
+  learnerSafeFeedback: string;
+}
+
 /** JudgeResponse */
 export interface JudgeResponse {
-  /** Summary */
-  summary: string;
-  /** Passed */
-  passed: boolean;
-  /** Minscore */
-  minScore: number;
-  /** Score */
-  score: number;
-  /** Maxscore */
-  maxScore: number;
-  /** Percentage */
-  percentage: number;
+  /** Criterionresults */
+  criterionResults: JudgeCriterionResult[];
+  /** Triggeredblockingerrors */
+  triggeredBlockingErrors: JudgeTriggeredBlockingError[];
+}
+
+/** JudgeTriggeredBlockingError */
+export interface JudgeTriggeredBlockingError {
+  /**
+   * Blockingerrorref
+   * @pattern ^B[1-9]\d*$
+   */
+  blockingErrorRef: string;
+  /**
+   * Learnersafefeedback
+   * @minLength 1
+   */
+  learnerSafeFeedback: string;
 }
 
 /** MentorChatRequest */
@@ -422,10 +501,8 @@ import axios from "axios";
 
 export type QueryParamsType = Record<string | number, any>;
 
-export interface FullRequestParams extends Omit<
-  AxiosRequestConfig,
-  "data" | "params" | "url" | "responseType"
-> {
+export interface FullRequestParams
+  extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -440,12 +517,13 @@ export interface FullRequestParams extends Omit<
   body?: unknown;
 }
 
-export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
+export type RequestParams = Omit<
+  FullRequestParams,
+  "body" | "method" | "query" | "path"
+>;
 
-export interface ApiConfig<SecurityDataType = unknown> extends Omit<
-  AxiosRequestConfig,
-  "data" | "cancelToken"
-> {
+export interface ApiConfig<SecurityDataType = unknown>
+  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
   securityWorker?: (
     securityData: SecurityDataType | null,
   ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
@@ -499,7 +577,9 @@ export class HttpClient<SecurityDataType = unknown> {
       ...(params2 || {}),
       headers: {
         ...((method &&
-          this.instance.defaults.headers[method.toLowerCase() as keyof HeadersDefaults]) ||
+          this.instance.defaults.headers[
+            method.toLowerCase() as keyof HeadersDefaults
+          ]) ||
           {}),
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
@@ -521,11 +601,15 @@ export class HttpClient<SecurityDataType = unknown> {
     }
     return Object.keys(input || {}).reduce((formData, key) => {
       const property = input[key];
-      const propertyContent: any[] = property instanceof Array ? property : [property];
+      const propertyContent: any[] =
+        property instanceof Array ? property : [property];
 
       for (const formItem of propertyContent) {
         const isFileType = formItem instanceof Blob || formItem instanceof File;
-        formData.append(key, isFileType ? formItem : this.stringifyFormItem(formItem));
+        formData.append(
+          key,
+          isFileType ? formItem : this.stringifyFormItem(formItem),
+        );
       }
 
       return formData;
@@ -549,11 +633,21 @@ export class HttpClient<SecurityDataType = unknown> {
     const requestParams = this.mergeRequestParams(params, secureParams);
     const responseFormat = format || this.format || undefined;
 
-    if (type === ContentType.FormData && body && body !== null && typeof body === "object") {
+    if (
+      type === ContentType.FormData &&
+      body &&
+      body !== null &&
+      typeof body === "object"
+    ) {
       body = this.createFormData(body as Record<string, unknown>);
     }
 
-    if (type === ContentType.Text && body && body !== null && typeof body !== "string") {
+    if (
+      type === ContentType.Text &&
+      body &&
+      body !== null &&
+      typeof body !== "string"
+    ) {
       body = JSON.stringify(body);
     }
 
@@ -575,7 +669,9 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title Luma API
  * @version 0.1.0
  */
-export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+export class API<
+  SecurityDataType extends unknown,
+> extends HttpClient<SecurityDataType> {
   api = {
     /**
      * @description Streams AI chat responses for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
@@ -631,7 +727,9 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/api/public/v1/ai/configuration
      * @secure
      */
-    getConfigurationStatusApiPublicV1AiConfigurationGet: (params: RequestParams = {}) =>
+    getConfigurationStatusApiPublicV1AiConfigurationGet: (
+      params: RequestParams = {},
+    ) =>
       this.request<PublicConfigurationResponse, void>({
         path: `/api/public/v1/ai/configuration`,
         method: "GET",
@@ -649,7 +747,10 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/api/public/v1/ai/mentor/chat
      * @secure
      */
-    mentorChatApiPublicV1AiMentorChatPost: (data: MentorChatRequest, params: RequestParams = {}) =>
+    mentorChatApiPublicV1AiMentorChatPost: (
+      data: MentorChatRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<void, void | HTTPValidationError>({
         path: `/api/public/v1/ai/mentor/chat`,
         method: "POST",
@@ -783,7 +884,10 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/api/public/v1/draft
      * @secure
      */
-    createDraftApiPublicV1DraftPost: (data: CreateDraft, params: RequestParams = {}) =>
+    createDraftApiPublicV1DraftPost: (
+      data: CreateDraft,
+      params: RequestParams = {},
+    ) =>
       this.request<CreateDraftResponse, void | HTTPValidationError>({
         path: `/api/public/v1/draft`,
         method: "POST",
@@ -824,7 +928,10 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/api/public/v1/draft/{integration_id}
      * @secure
      */
-    getDraftApiPublicV1DraftIntegrationIdGet: (integrationId: string, params: RequestParams = {}) =>
+    getDraftApiPublicV1DraftIntegrationIdGet: (
+      integrationId: string,
+      params: RequestParams = {},
+    ) =>
       this.request<GetDraftResponse, void | HTTPValidationError>({
         path: `/api/public/v1/draft/${integrationId}`,
         method: "GET",
