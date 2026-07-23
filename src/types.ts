@@ -1,5 +1,7 @@
 import { AiCapability, AiCapabilityMode, AiCapabilityProvider } from "./api/generated-api";
 import type {
+  AiJudgeConfigurationResponse,
+  AiJudgeConfigurationValidationResponse,
   ArchitectCourseResponse,
   AssetResponse,
   BodyTranscribeDictationApiPublicV1AiTranscriptionsPost,
@@ -53,6 +55,10 @@ export type MentorChatOptions = MentorChatRequest;
 export type MentorGenerateChatResponse = MentorChatResponse;
 export type MentorJudgeOptions = StructuredGenerationRequest;
 export type MentorJudgeResponse = JudgeResponse;
+export type GenerateAiJudgeConfigurationOptions = StructuredGenerationRequest;
+export type GenerateAiJudgeConfigurationResponse = AiJudgeConfigurationResponse;
+export type ValidateAiJudgeConfigurationOptions = StructuredGenerationRequest;
+export type ValidateAiJudgeConfigurationResponse = AiJudgeConfigurationValidationResponse;
 export type CreateEmbeddingsOptions = EmbeddingsRequest;
 export type CreateEmbeddingsResponse = EmbeddingsResponse;
 export type GenerateTranslationsOptions = StructuredGenerationRequest;
@@ -77,6 +83,8 @@ export const LUMA_AI_CAPABILITIES = {
   COURSE_GENERATION_EMBEDDINGS: AiCapability.CourseGenerationEmbeddings,
   AI_MENTOR_CHAT: AiCapability.AiMentorChat,
   AI_MENTOR_JUDGE: AiCapability.AiMentorJudge,
+  AI_JUDGE_CONFIGURATION_GENERATOR: AiCapability.AiJudgeConfigurationGenerator,
+  AI_JUDGE_CONFIGURATION_VALIDATOR: AiCapability.AiJudgeConfigurationValidator,
   AI_MENTOR_RAG_EMBEDDINGS: AiCapability.AiMentorRagEmbeddings,
   TRANSLATION_GENERATION: AiCapability.TranslationGeneration,
   DICTATION_TRANSCRIPTION: AiCapability.DictationTranscription,

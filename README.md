@@ -112,6 +112,8 @@ Namespaces:
 - `client.mentor.generateChat(opts)` - generate a non-stream mentor chat response.
 - `client.mentor.judge(opts)`
 - `client.ai.createEmbeddings(opts)`
+- `client.ai.generateJudgeConfiguration(opts)`
+- `client.ai.validateJudgeConfiguration(opts)`
 - `client.ai.generateTranslations(opts)`
 - `client.ai.transcribeDictation(opts)`
 - `client.configuration.get()`

@@ -43,6 +43,8 @@ export enum AiCapability {
   CourseGenerationEmbeddings = "courseGenerationEmbeddings",
   AiMentorChat = "aiMentorChat",
   AiMentorJudge = "aiMentorJudge",
+  AiJudgeConfigurationGenerator = "aiJudgeConfigurationGenerator",
+  AiJudgeConfigurationValidator = "aiJudgeConfigurationValidator",
   AiMentorRagEmbeddings = "aiMentorRagEmbeddings",
   TranslationGeneration = "translationGeneration",
   DictationTranscription = "dictationTranscription",
@@ -58,6 +60,189 @@ export interface AiCapabilityStatus {
   mode: AiCapabilityMode;
   provider: AiCapabilityProvider | null;
   reason?: AiRuntimeResolutionErrorCode | null;
+}
+
+/** AiJudgeBlockingErrorValidationTarget */
+export interface AiJudgeBlockingErrorValidationTarget {
+  /** Type */
+  type: "blockingError";
+  /**
+   * Ref
+   * @pattern ^B[1-9]\d*$
+   */
+  ref: string;
+  /** Field */
+  field: string | null;
+}
+
+/** AiJudgeConfigurationBlockingError */
+export interface AiJudgeConfigurationBlockingError {
+  /**
+   * Ref
+   * @pattern ^B[1-9]\d*$
+   */
+  ref: string;
+  /**
+   * Description
+   * @minLength 1
+   */
+  description: string;
+}
+
+/** AiJudgeConfigurationCriterion */
+export interface AiJudgeConfigurationCriterion {
+  /**
+   * Ref
+   * @pattern ^C[1-9]\d*$
+   */
+  ref: string;
+  /**
+   * Title
+   * @minLength 1
+   * @maxLength 80
+   */
+  title: string;
+  /**
+   * Expectedbehavior
+   * @minLength 1
+   */
+  expectedBehavior: string;
+  /**
+   * Maxscore
+   * @min 1
+   * @max 5
+   */
+  maxScore: number;
+  /** Scoreguidance */
+  scoreGuidance: AiJudgeConfigurationScoreGuidance[];
+}
+
+/** AiJudgeConfigurationResponse */
+export interface AiJudgeConfigurationResponse {
+  /**
+   * Taskgoal
+   * @minLength 1
+   */
+  taskGoal: string;
+  /**
+   * Passingthresholdpercent
+   * @min 0
+   * @max 100
+   */
+  passingThresholdPercent: number;
+  /** Criteria */
+  criteria: AiJudgeConfigurationCriterion[];
+  /** Blockingerrors */
+  blockingErrors: AiJudgeConfigurationBlockingError[];
+}
+
+/** AiJudgeConfigurationScoreGuidance */
+export interface AiJudgeConfigurationScoreGuidance {
+  /**
+   * Score
+   * @min 0
+   * @max 5
+   */
+  score: number;
+  /**
+   * Description
+   * @minLength 1
+   */
+  description: string;
+  /** Example */
+  example: string | null;
+}
+
+/** AiJudgeConfigurationValidationResponse */
+export interface AiJudgeConfigurationValidationResponse {
+  /**
+   * Summary
+   * @minLength 1
+   * @maxLength 180
+   */
+  summary: string;
+  /**
+   * Issues
+   * @maxItems 3
+   */
+  issues: AiJudgeValidationIssue[];
+}
+
+/** AiJudgeConfigurationValidationTarget */
+export interface AiJudgeConfigurationValidationTarget {
+  /** Type */
+  type: "configuration";
+  /** Field */
+  field: string | null;
+}
+
+/** AiJudgeCriterionValidationTarget */
+export interface AiJudgeCriterionValidationTarget {
+  /** Type */
+  type: "criterion";
+  /**
+   * Ref
+   * @pattern ^C[1-9]\d*$
+   */
+  ref: string;
+  /** Field */
+  field: string | null;
+}
+
+/** AiJudgeScoreGuidanceValidationTarget */
+export interface AiJudgeScoreGuidanceValidationTarget {
+  /** Type */
+  type: "scoreGuidance";
+  /**
+   * Ref
+   * @pattern ^C[1-9]\d*$
+   */
+  ref: string;
+  /**
+   * Score
+   * @min 0
+   * @max 5
+   */
+  score: number;
+  /** Field */
+  field: string | null;
+}
+
+/** AiJudgeValidationIssue */
+export interface AiJudgeValidationIssue {
+  /**
+   * Code
+   * @minLength 1
+   */
+  code: string;
+  /** Severity */
+  severity: "error" | "warning";
+  /** Target */
+  target:
+    | ({
+        type: "blockingError";
+      } & AiJudgeBlockingErrorValidationTarget)
+    | ({
+        type: "configuration";
+      } & AiJudgeConfigurationValidationTarget)
+    | ({
+        type: "criterion";
+      } & AiJudgeCriterionValidationTarget)
+    | ({
+        type: "scoreGuidance";
+      } & AiJudgeScoreGuidanceValidationTarget);
+  /**
+   * Message
+   * @minLength 1
+   * @maxLength 160
+   */
+  message: string;
+  /**
+   * Correction
+   * @minLength 1
+   * @maxLength 220
+   */
+  correction: string;
 }
 
 /** ArchitectAiJudgeBlockingErrorResponse */
@@ -798,6 +983,55 @@ export class API<
     ) =>
       this.request<JudgeResponse, void | HTTPValidationError>({
         path: `/api/public/v1/ai/mentor/judge`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name GenerateJudgeConfigurationApiPublicV1AiJudgeConfigurationGeneratePost
+     * @summary Generate AI Judge Configuration With Custom Runtime
+     * @request POST:/api/public/v1/ai/judge-configuration/generate
+     * @secure
+     */
+    generateJudgeConfigurationApiPublicV1AiJudgeConfigurationGeneratePost: (
+      data: StructuredGenerationRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<AiJudgeConfigurationResponse, void | HTTPValidationError>({
+        path: `/api/public/v1/ai/judge-configuration/generate`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name ValidateJudgeConfigurationApiPublicV1AiJudgeConfigurationValidatePost
+     * @summary Validate AI Judge Configuration With Custom Runtime
+     * @request POST:/api/public/v1/ai/judge-configuration/validate
+     * @secure
+     */
+    validateJudgeConfigurationApiPublicV1AiJudgeConfigurationValidatePost: (
+      data: StructuredGenerationRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        AiJudgeConfigurationValidationResponse,
+        void | HTTPValidationError
+      >({
+        path: `/api/public/v1/ai/judge-configuration/validate`,
         method: "POST",
         body: data,
         secure: true,

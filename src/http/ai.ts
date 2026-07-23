@@ -2,10 +2,14 @@ import { API } from "../api/generated-api";
 import {
   CreateEmbeddingsOptions,
   CreateEmbeddingsResponse,
+  GenerateAiJudgeConfigurationOptions,
+  GenerateAiJudgeConfigurationResponse,
   GenerateTranslationsOptions,
   GenerateTranslationsResponse,
   TranscribeDictationOptions,
   TranscribeDictationResponse,
+  ValidateAiJudgeConfigurationOptions,
+  ValidateAiJudgeConfigurationResponse,
 } from "../types";
 
 export class LumaAiClient {
@@ -13,6 +17,28 @@ export class LumaAiClient {
 
   async createEmbeddings(opts: CreateEmbeddingsOptions): Promise<CreateEmbeddingsResponse> {
     const response = await this.apiClient.api.createEmbeddingsApiPublicV1AiEmbeddingsPost(opts);
+
+    return response.data;
+  }
+
+  async generateJudgeConfiguration(
+    opts: GenerateAiJudgeConfigurationOptions,
+  ): Promise<GenerateAiJudgeConfigurationResponse> {
+    const response =
+      await this.apiClient.api.generateJudgeConfigurationApiPublicV1AiJudgeConfigurationGeneratePost(
+        opts,
+      );
+
+    return response.data;
+  }
+
+  async validateJudgeConfiguration(
+    opts: ValidateAiJudgeConfigurationOptions,
+  ): Promise<ValidateAiJudgeConfigurationResponse> {
+    const response =
+      await this.apiClient.api.validateJudgeConfigurationApiPublicV1AiJudgeConfigurationValidatePost(
+        opts,
+      );
 
     return response.data;
   }

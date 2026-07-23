@@ -7,7 +7,9 @@
   "paths": {
     "/api/public/v1/ai/chat/{integration_id}": {
       "post": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Chat With Draft By Integration ID",
         "description": "Streams AI chat responses for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "chat_api_public_v1_ai_chat__integration_id__post",
@@ -71,7 +73,9 @@
     },
     "/api/public/v1/ai/assets/{integration_id}": {
       "get": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Get Draft Assets By Integration ID",
         "description": "Returns only ready AI assets (successfully generated and uploaded) for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_assets_api_public_v1_ai_assets__integration_id__get",
@@ -128,7 +132,9 @@
     },
     "/api/public/v1/ai/configuration": {
       "get": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Get Public API Configuration Status",
         "description": "Returns whether required API-key-scoped provider secrets are configured for course generation and voice mentor.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_configuration_status_api_public_v1_ai_configuration_get",
@@ -156,7 +162,9 @@
     },
     "/api/public/v1/ai/mentor/chat": {
       "post": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Stream Mentor Chat With Custom Runtime",
         "operationId": "mentor_chat_api_public_v1_ai_mentor_chat_post",
         "requestBody": {
@@ -199,7 +207,9 @@
     },
     "/api/public/v1/ai/mentor/chat/generate": {
       "post": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Generate Mentor Chat Message With Custom Runtime",
         "operationId": "generate_mentor_chat_api_public_v1_ai_mentor_chat_generate_post",
         "requestBody": {
@@ -249,7 +259,9 @@
     },
     "/api/public/v1/ai/mentor/judge": {
       "post": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Run AI Mentor Judge With Custom Runtime",
         "operationId": "mentor_judge_api_public_v1_ai_mentor_judge_post",
         "requestBody": {
@@ -297,9 +309,115 @@
         ]
       }
     },
+    "/api/public/v1/ai/judge-configuration/generate": {
+      "post": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Generate AI Judge Configuration With Custom Runtime",
+        "operationId": "generate_judge_configuration_api_public_v1_ai_judge_configuration_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StructuredGenerationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiJudgeConfigurationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/public/v1/ai/judge-configuration/validate": {
+      "post": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Validate AI Judge Configuration With Custom Runtime",
+        "operationId": "validate_judge_configuration_api_public_v1_ai_judge_configuration_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StructuredGenerationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiJudgeConfigurationValidationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
     "/api/public/v1/ai/translations/generate": {
       "post": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Generate Translations With Custom Runtime",
         "operationId": "generate_translations_api_public_v1_ai_translations_generate_post",
         "requestBody": {
@@ -349,7 +467,9 @@
     },
     "/api/public/v1/ai/embeddings": {
       "post": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Create Embeddings With Custom Runtime",
         "operationId": "create_embeddings_api_public_v1_ai_embeddings_post",
         "requestBody": {
@@ -399,7 +519,9 @@
     },
     "/api/public/v1/ai/transcriptions": {
       "post": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Transcribe Dictation Audio With Custom Runtime",
         "operationId": "transcribe_dictation_api_public_v1_ai_transcriptions_post",
         "requestBody": {
@@ -449,7 +571,9 @@
     },
     "/api/public/v1/draft": {
       "post": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Create Draft By Integration ID",
         "description": "Creates a draft for a given `integration_id` (the external course identifier you are building a draft for) under the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "create_draft_api_public_v1_draft_post",
@@ -500,7 +624,9 @@
     },
     "/api/public/v1/draft/{integration_id}": {
       "delete": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Delete Draft By Integration ID",
         "description": "Deletes the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "delete_draft_api_public_v1_draft__integration_id__delete",
@@ -551,7 +677,9 @@
         }
       },
       "get": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Get Draft Status By Integration ID",
         "description": "Fetches draft status for the provided `integration_id` (the external course identifier you are building a draft for) inside the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_draft_api_public_v1_draft__integration_id__get",
@@ -604,7 +732,9 @@
     },
     "/api/public/v1/draft/ingest/{integration_id}": {
       "post": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Ingest File To Draft By Integration ID",
         "description": "Uploads a file to the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "ingest_api_public_v1_draft_ingest__integration_id__post",
@@ -670,7 +800,9 @@
     },
     "/api/public/v1/draft/ingest/{integration_id}/{document_id}": {
       "delete": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Delete Ingested Document By Integration ID",
         "description": "Removes a previously ingested document from the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "delete_ingested_document_api_public_v1_draft_ingest__integration_id___document_id__delete",
@@ -733,7 +865,9 @@
     },
     "/api/public/v1/draft/files/{integration_id}": {
       "get": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Get Draft Files By Integration ID",
         "description": "Returns all files linked to the draft for the provided `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_draft_files_api_public_v1_draft_files__integration_id__get",
@@ -790,7 +924,9 @@
     },
     "/api/public/v1/draft/messages/{integration_id}": {
       "get": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Get Draft Messages By Integration ID",
         "description": "Returns all draft chat messages for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_draft_messages_api_public_v1_draft_messages__integration_id__get",
@@ -847,7 +983,9 @@
     },
     "/api/public/v1/draft/generated-course/{integration_id}": {
       "get": {
-        "tags": ["Public - Require API Key"],
+        "tags": [
+          "Public - Require API Key"
+        ],
         "summary": "Get Generated Course By Integration ID",
         "description": "Returns the generated course payload for the draft associated with `integration_id` (the external course identifier you are building a draft for), scoped to the organization resolved from `X-API-Key`.\n\nAuthorization header required: `X-API-Key: <luma_api_key>`.",
         "operationId": "get_generated_course_api_public_v1_draft_generated_course__integration_id__get",
@@ -909,6 +1047,8 @@
           "courseGenerationEmbeddings",
           "aiMentorChat",
           "aiMentorJudge",
+          "aiJudgeConfigurationGenerator",
+          "aiJudgeConfigurationValidator",
           "aiMentorRagEmbeddings",
           "translationGeneration",
           "dictationTranscription",
@@ -920,12 +1060,19 @@
       },
       "AiCapabilityMode": {
         "type": "string",
-        "enum": ["core", "custom", "disabled"],
+        "enum": [
+          "core",
+          "custom",
+          "disabled"
+        ],
         "title": "AiCapabilityMode"
       },
       "AiCapabilityProvider": {
         "type": "string",
-        "enum": ["luma", "mentingo-core"],
+        "enum": [
+          "luma",
+          "mentingo-core"
+        ],
         "title": "AiCapabilityProvider"
       },
       "AiCapabilityStatus": {
@@ -959,8 +1106,371 @@
           }
         },
         "type": "object",
-        "required": ["enabled", "mode", "provider"],
+        "required": [
+          "enabled",
+          "mode",
+          "provider"
+        ],
         "title": "AiCapabilityStatus"
+      },
+      "AiJudgeBlockingErrorValidationTarget": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "blockingError",
+            "title": "Type"
+          },
+          "ref": {
+            "type": "string",
+            "pattern": "^B[1-9]\\d*$",
+            "title": "Ref"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "ref",
+          "field"
+        ],
+        "title": "AiJudgeBlockingErrorValidationTarget"
+      },
+      "AiJudgeConfigurationBlockingError": {
+        "properties": {
+          "ref": {
+            "type": "string",
+            "pattern": "^B[1-9]\\d*$",
+            "title": "Ref"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Description"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ref",
+          "description"
+        ],
+        "title": "AiJudgeConfigurationBlockingError"
+      },
+      "AiJudgeConfigurationCriterion": {
+        "properties": {
+          "ref": {
+            "type": "string",
+            "pattern": "^C[1-9]\\d*$",
+            "title": "Ref"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "expectedBehavior": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Expectedbehavior"
+          },
+          "maxScore": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Maxscore"
+          },
+          "scoreGuidance": {
+            "items": {
+              "$ref": "#/components/schemas/AiJudgeConfigurationScoreGuidance"
+            },
+            "type": "array",
+            "title": "Scoreguidance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ref",
+          "title",
+          "expectedBehavior",
+          "maxScore",
+          "scoreGuidance"
+        ],
+        "title": "AiJudgeConfigurationCriterion"
+      },
+      "AiJudgeConfigurationResponse": {
+        "properties": {
+          "taskGoal": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Taskgoal"
+          },
+          "passingThresholdPercent": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Passingthresholdpercent"
+          },
+          "criteria": {
+            "items": {
+              "$ref": "#/components/schemas/AiJudgeConfigurationCriterion"
+            },
+            "type": "array",
+            "title": "Criteria"
+          },
+          "blockingErrors": {
+            "items": {
+              "$ref": "#/components/schemas/AiJudgeConfigurationBlockingError"
+            },
+            "type": "array",
+            "title": "Blockingerrors"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "taskGoal",
+          "passingThresholdPercent",
+          "criteria",
+          "blockingErrors"
+        ],
+        "title": "AiJudgeConfigurationResponse"
+      },
+      "AiJudgeConfigurationScoreGuidance": {
+        "properties": {
+          "score": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 0.0,
+            "title": "Score"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Description"
+          },
+          "example": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Example"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "score",
+          "description",
+          "example"
+        ],
+        "title": "AiJudgeConfigurationScoreGuidance"
+      },
+      "AiJudgeConfigurationValidationResponse": {
+        "properties": {
+          "summary": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 1,
+            "title": "Summary"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/AiJudgeValidationIssue"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "title": "Issues"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "summary",
+          "issues"
+        ],
+        "title": "AiJudgeConfigurationValidationResponse"
+      },
+      "AiJudgeConfigurationValidationTarget": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "configuration",
+            "title": "Type"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "field"
+        ],
+        "title": "AiJudgeConfigurationValidationTarget"
+      },
+      "AiJudgeCriterionValidationTarget": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "criterion",
+            "title": "Type"
+          },
+          "ref": {
+            "type": "string",
+            "pattern": "^C[1-9]\\d*$",
+            "title": "Ref"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "ref",
+          "field"
+        ],
+        "title": "AiJudgeCriterionValidationTarget"
+      },
+      "AiJudgeScoreGuidanceValidationTarget": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "scoreGuidance",
+            "title": "Type"
+          },
+          "ref": {
+            "type": "string",
+            "pattern": "^C[1-9]\\d*$",
+            "title": "Ref"
+          },
+          "score": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 0.0,
+            "title": "Score"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "ref",
+          "score",
+          "field"
+        ],
+        "title": "AiJudgeScoreGuidanceValidationTarget"
+      },
+      "AiJudgeValidationIssue": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Code"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning"
+            ],
+            "title": "Severity"
+          },
+          "target": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AiJudgeConfigurationValidationTarget"
+              },
+              {
+                "$ref": "#/components/schemas/AiJudgeCriterionValidationTarget"
+              },
+              {
+                "$ref": "#/components/schemas/AiJudgeScoreGuidanceValidationTarget"
+              },
+              {
+                "$ref": "#/components/schemas/AiJudgeBlockingErrorValidationTarget"
+              }
+            ],
+            "title": "Target",
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "blockingError": "#/components/schemas/AiJudgeBlockingErrorValidationTarget",
+                "configuration": "#/components/schemas/AiJudgeConfigurationValidationTarget",
+                "criterion": "#/components/schemas/AiJudgeCriterionValidationTarget",
+                "scoreGuidance": "#/components/schemas/AiJudgeScoreGuidanceValidationTarget"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Message"
+          },
+          "correction": {
+            "type": "string",
+            "maxLength": 220,
+            "minLength": 1,
+            "title": "Correction"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "target",
+          "message",
+          "correction"
+        ],
+        "title": "AiJudgeValidationIssue"
       },
       "AiRuntimeResolutionErrorCode": {
         "type": "string",
@@ -986,7 +1496,9 @@
         },
         "additionalProperties": false,
         "type": "object",
-        "required": ["description"],
+        "required": [
+          "description"
+        ],
         "title": "ArchitectAiJudgeBlockingErrorResponse"
       },
       "ArchitectAiJudgeConfigurationResponse": {
@@ -1019,7 +1531,12 @@
         },
         "additionalProperties": false,
         "type": "object",
-        "required": ["taskGoal", "passingThresholdPercent", "criteria", "blockingErrors"],
+        "required": [
+          "taskGoal",
+          "passingThresholdPercent",
+          "criteria",
+          "blockingErrors"
+        ],
         "title": "ArchitectAiJudgeConfigurationResponse"
       },
       "ArchitectAiJudgeCriterionResponse": {
@@ -1048,7 +1565,12 @@
         },
         "additionalProperties": false,
         "type": "object",
-        "required": ["title", "expectedBehavior", "maxScore", "scoreGuidance"],
+        "required": [
+          "title",
+          "expectedBehavior",
+          "maxScore",
+          "scoreGuidance"
+        ],
         "title": "ArchitectAiJudgeCriterionResponse"
       },
       "ArchitectAiJudgeScoreGuidanceResponse": {
@@ -1070,7 +1592,11 @@
         },
         "additionalProperties": false,
         "type": "object",
-        "required": ["score", "description", "example"],
+        "required": [
+          "score",
+          "description",
+          "example"
+        ],
         "title": "ArchitectAiJudgeScoreGuidanceResponse"
       },
       "ArchitectAiMentorLessonResponse": {
@@ -1099,7 +1625,11 @@
           },
           "type": {
             "type": "string",
-            "enum": ["ROLEPLAY", "MENTOR", "TEACHER"],
+            "enum": [
+              "ROLEPLAY",
+              "MENTOR",
+              "TEACHER"
+            ],
             "title": "Type"
           },
           "taskDescription": {
@@ -1108,7 +1638,10 @@
           },
           "ttsPreset": {
             "type": "string",
-            "enum": ["male", "female"],
+            "enum": [
+              "male",
+              "female"
+            ],
             "title": "Ttspreset"
           }
         },
@@ -1144,7 +1677,11 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": ["chapterIndex", "title", "lessons"],
+        "required": [
+          "chapterIndex",
+          "title",
+          "lessons"
+        ],
         "title": "ArchitectChapterResponse"
       },
       "ArchitectCourseResponse": {
@@ -1167,7 +1704,11 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": ["title", "description", "chapters"],
+        "required": [
+          "title",
+          "description",
+          "chapters"
+        ],
         "title": "ArchitectCourseResponse"
       },
       "ArchitectLessonAssetResponse": {
@@ -1215,7 +1756,11 @@
             "anyOf": [
               {
                 "type": "string",
-                "enum": ["high", "medium", "low"]
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
               },
               {
                 "type": "null"
@@ -1226,14 +1771,20 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": ["type"],
+        "required": [
+          "type"
+        ],
         "title": "ArchitectLessonAssetResponse"
       },
       "ArchitectLessonResponse": {
         "properties": {
           "lessonType": {
             "type": "string",
-            "enum": ["AI_MENTOR", "CONTENT", "QUIZ"],
+            "enum": [
+              "AI_MENTOR",
+              "CONTENT",
+              "QUIZ"
+            ],
             "title": "Lessontype"
           },
           "title": {
@@ -1285,7 +1836,10 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": ["lessonType", "title"],
+        "required": [
+          "lessonType",
+          "title"
+        ],
         "title": "ArchitectLessonResponse"
       },
       "ArchitectQuizOptionResponse": {
@@ -1316,7 +1870,11 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": ["optionIndex", "optionText", "isCorrect"],
+        "required": [
+          "optionIndex",
+          "optionText",
+          "isCorrect"
+        ],
         "title": "ArchitectQuizOptionResponse"
       },
       "ArchitectQuizQuestionResponse": {
@@ -1381,7 +1939,11 @@
         },
         "additionalProperties": true,
         "type": "object",
-        "required": ["questionIndex", "type", "title"],
+        "required": [
+          "questionIndex",
+          "type",
+          "title"
+        ],
         "title": "ArchitectQuizQuestionResponse"
       },
       "AssetResponse": {
@@ -1397,7 +1959,10 @@
           }
         },
         "type": "object",
-        "required": ["assetId", "signedUrl"],
+        "required": [
+          "assetId",
+          "signedUrl"
+        ],
         "title": "AssetResponse"
       },
       "Body_ingest_api_public_v1_draft_ingest__integration_id__post": {
@@ -1409,7 +1974,9 @@
           }
         },
         "type": "object",
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_ingest_api_public_v1_draft_ingest__integration_id__post"
       },
       "Body_transcribe_dictation_api_public_v1_ai_transcriptions_post": {
@@ -1421,7 +1988,9 @@
           }
         },
         "type": "object",
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_transcribe_dictation_api_public_v1_ai_transcriptions_post"
       },
       "CreateDraft": {
@@ -1442,7 +2011,10 @@
           }
         },
         "type": "object",
-        "required": ["integrationId", "draftName"],
+        "required": [
+          "integrationId",
+          "draftName"
+        ],
         "title": "CreateDraft"
       },
       "CreateDraftResponse": {
@@ -1454,7 +2026,9 @@
           }
         },
         "type": "object",
-        "required": ["draftId"],
+        "required": [
+          "draftId"
+        ],
         "title": "CreateDraftResponse"
       },
       "DeleteDraftResponse": {
@@ -1465,7 +2039,9 @@
           }
         },
         "type": "object",
-        "required": ["message"],
+        "required": [
+          "message"
+        ],
         "title": "DeleteDraftResponse"
       },
       "DeleteIngestedDocumentResponse": {
@@ -1476,7 +2052,9 @@
           }
         },
         "type": "object",
-        "required": ["message"],
+        "required": [
+          "message"
+        ],
         "title": "DeleteIngestedDocumentResponse"
       },
       "DraftFilesResponseBody": {
@@ -1496,7 +2074,11 @@
           }
         },
         "type": "object",
-        "required": ["id", "filename", "contentType"],
+        "required": [
+          "id",
+          "filename",
+          "contentType"
+        ],
         "title": "DraftFilesResponseBody"
       },
       "DraftMessageResponse": {
@@ -1547,7 +2129,15 @@
           }
         },
         "type": "object",
-        "required": ["id", "draftId", "role", "content", "contentType", "createdAt", "updatedAt"],
+        "required": [
+          "id",
+          "draftId",
+          "role",
+          "content",
+          "contentType",
+          "createdAt",
+          "updatedAt"
+        ],
         "title": "DraftMessageResponse"
       },
       "EmbeddingsRequest": {
@@ -1561,7 +2151,9 @@
           }
         },
         "type": "object",
-        "required": ["texts"],
+        "required": [
+          "texts"
+        ],
         "title": "EmbeddingsRequest"
       },
       "EmbeddingsResponse": {
@@ -1578,7 +2170,9 @@
           }
         },
         "type": "object",
-        "required": ["embeddings"],
+        "required": [
+          "embeddings"
+        ],
         "title": "EmbeddingsResponse"
       },
       "GetDraftResponse": {
@@ -1594,7 +2188,10 @@
           }
         },
         "type": "object",
-        "required": ["draftId", "isCourseGenerated"],
+        "required": [
+          "draftId",
+          "isCourseGenerated"
+        ],
         "title": "GetDraftResponse"
       },
       "HTTPValidationError": {
@@ -1633,7 +2230,10 @@
           }
         },
         "type": "object",
-        "required": ["success", "queued"],
+        "required": [
+          "success",
+          "queued"
+        ],
         "title": "IngestDraftResponse"
       },
       "JudgeCriterionResult": {
@@ -1656,7 +2256,11 @@
         },
         "additionalProperties": false,
         "type": "object",
-        "required": ["criterionRef", "awardedScore", "learnerSafeFeedback"],
+        "required": [
+          "criterionRef",
+          "awardedScore",
+          "learnerSafeFeedback"
+        ],
         "title": "JudgeCriterionResult"
       },
       "JudgeResponse": {
@@ -1678,7 +2282,10 @@
         },
         "additionalProperties": false,
         "type": "object",
-        "required": ["criterionResults", "triggeredBlockingErrors"],
+        "required": [
+          "criterionResults",
+          "triggeredBlockingErrors"
+        ],
         "title": "JudgeResponse"
       },
       "JudgeTriggeredBlockingError": {
@@ -1696,7 +2303,10 @@
         },
         "additionalProperties": false,
         "type": "object",
-        "required": ["blockingErrorRef", "learnerSafeFeedback"],
+        "required": [
+          "blockingErrorRef",
+          "learnerSafeFeedback"
+        ],
         "title": "JudgeTriggeredBlockingError"
       },
       "MentorChatRequest": {
@@ -1732,7 +2342,9 @@
           }
         },
         "type": "object",
-        "required": ["messages"],
+        "required": [
+          "messages"
+        ],
         "title": "MentorChatRequest"
       },
       "MentorChatResponse": {
@@ -1743,7 +2355,9 @@
           }
         },
         "type": "object",
-        "required": ["message"],
+        "required": [
+          "message"
+        ],
         "title": "MentorChatResponse"
       },
       "Message": {
@@ -1754,14 +2368,20 @@
           }
         },
         "type": "object",
-        "required": ["message"],
+        "required": [
+          "message"
+        ],
         "title": "Message"
       },
       "PublicAiMessage": {
         "properties": {
           "role": {
             "type": "string",
-            "enum": ["system", "user", "assistant"],
+            "enum": [
+              "system",
+              "user",
+              "assistant"
+            ],
             "title": "Role"
           },
           "content": {
@@ -1770,7 +2390,10 @@
           }
         },
         "type": "object",
-        "required": ["role", "content"],
+        "required": [
+          "role",
+          "content"
+        ],
         "title": "PublicAiMessage"
       },
       "PublicConfigurationResponse": {
@@ -1799,7 +2422,12 @@
           }
         },
         "type": "object",
-        "required": ["courseGeneration", "voiceMentor", "enabled", "capabilities"],
+        "required": [
+          "courseGeneration",
+          "voiceMentor",
+          "enabled",
+          "capabilities"
+        ],
         "title": "PublicConfigurationResponse"
       },
       "StructuredGenerationRequest": {
@@ -1824,7 +2452,9 @@
           }
         },
         "type": "object",
-        "required": ["messages"],
+        "required": [
+          "messages"
+        ],
         "title": "StructuredGenerationRequest"
       },
       "TranscriptionResponse": {
@@ -1835,7 +2465,9 @@
           }
         },
         "type": "object",
-        "required": ["text"],
+        "required": [
+          "text"
+        ],
         "title": "TranscriptionResponse"
       },
       "TranslationResponse": {
@@ -1850,7 +2482,9 @@
         },
         "additionalProperties": false,
         "type": "object",
-        "required": ["translations"],
+        "required": [
+          "translations"
+        ],
         "title": "TranslationResponse"
       },
       "ValidationError": {
@@ -1886,7 +2520,11 @@
           }
         },
         "type": "object",
-        "required": ["loc", "msg", "type"],
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
         "title": "ValidationError"
       }
     },
