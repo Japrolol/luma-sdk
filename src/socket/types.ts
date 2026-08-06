@@ -3,6 +3,8 @@ import { Socket } from "socket.io-client";
 export const LUMA_SOCKET_MESSAGE_TYPES = {
   AUDIO_START: "audio.start",
   AUDIO_CHUNK: "audio.chunk",
+  AUDIO_RECONNECT: "audio.reconnect",
+  AUDIO_RECOVERED: "audio.recovered",
   AUDIO_STOP: "audio.stop",
   MENTOR_TEXT_DELTA: "mentor.text.delta",
   MENTOR_TEXT_END: "mentor.text.end",
@@ -22,6 +24,9 @@ export const LUMA_SOCKET_LISTEN_EVENTS = {
   PONG: "pong",
   AUDIO_STARTED: "audio:start",
   AUDIO_CHUNKED: "audio:chunked",
+  AUDIO_CHUNK_ERROR: "audio:chunk_error",
+  AUDIO_RECOVERED: "audio:recovered",
+  AUDIO_RECONNECT_ERROR: "audio:reconnect_error",
   AUDIO_STOPPED: "audio:stopped",
   MENTOR_TRANSCRIPTION: "mentor:transcription",
   AUDIO_OUTPUT_CHUNK: "audio:output:chunk",
@@ -41,6 +46,7 @@ export const LUMA_MENTOR_STREAM_EVENT_TYPES = {
 export const LUMA_SOCKET_EMIT_EVENTS = {
   START_AUDIO: "start_audio",
   AUDIO_CHUNK: "audio_chunk",
+  AUDIO_RECONNECT: "audio_reconnect",
   AUDIO_STOP: "audio_stop",
   MENTOR_TEXT_DELTA: "mentor_text_delta",
   MENTOR_TEXT_END: "mentor_text_end",
@@ -80,6 +86,13 @@ export type AudioChunkPayload = {
   };
 };
 
+export type AudioReconnectPayload = {
+  type: (typeof LUMA_SOCKET_MESSAGE_TYPES)["AUDIO_RECONNECT"];
+  sessionRunId: string;
+  lastSentAudioSeq: number;
+  attempt: number;
+};
+
 export type AudioStopPayload = {
   type: (typeof LUMA_SOCKET_MESSAGE_TYPES)["AUDIO_STOP"];
 };
@@ -115,8 +128,57 @@ export type ServerConnectedPayload = {
   sessionId: string;
 };
 
-export type AudioStartedPayload = {
+export type TranscriptionSessionPlan = {
+  effectiveTranscriptionMode: (typeof TRANSCRIPTION_MODES)[keyof typeof TRANSCRIPTION_MODES];
+  providerAdapter: string;
   [key: string]: unknown;
+};
+
+export type AudioStartedPayload = {
+  type: (typeof LUMA_SOCKET_MESSAGE_TYPES)["AUDIO_START"];
+  sessionId: string;
+  sessionRunId: string;
+  audioAction: (typeof LUMA_AUDIO_ACTIONS)["VOICE_MENTOR"];
+  meta: StartAudioPayload["meta"];
+  currentSocketUser: {
+    userId: string;
+    lessonId: string;
+  };
+  transcriptionSessionPlan: TranscriptionSessionPlan;
+  lastAcceptedAudioSeq: number;
+  nextAudioSeq: number;
+};
+
+export type AudioChunkedPayload = {
+  type: (typeof LUMA_SOCKET_MESSAGE_TYPES)["AUDIO_CHUNK"];
+  sessionId: string;
+  sessionRunId: string;
+  acceptedAudioSeq: number;
+  lastAcceptedAudioSeq: number;
+  nextAudioSeq: number;
+  duplicate: boolean;
+};
+
+export type AudioRecoveryPayload = {
+  type: (typeof LUMA_SOCKET_MESSAGE_TYPES)["AUDIO_RECOVERED"];
+  sessionId: string;
+  sessionRunId: string;
+  state: "listening" | "mentor_active" | "user_speaking";
+  providerState: "connected" | "restarted" | "not_applicable";
+  lastAcceptedAudioSeq: number;
+  nextAudioSeq: number;
+  clientLastSentAudioSeq: number;
+  attempt: number;
+  transcriptionSessionPlan: TranscriptionSessionPlan;
+};
+
+export type AudioProtocolErrorPayload = {
+  type: string;
+  sessionId: string;
+  sessionRunId?: string;
+  attempt?: number;
+  code: string;
+  meta?: AudioChunkPayload["meta"];
 };
 
 export type MentorStreamEventEnvelope<TType extends string, TData> = {
@@ -181,7 +243,12 @@ export type LumaSocketListenEvents = {
   [LUMA_SOCKET_LISTEN_EVENTS.SERVER_CONNECTED]: (payload: ServerConnectedPayload) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.PONG]: (payload: unknown) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STARTED]: (payload: AudioStartedPayload) => void;
-  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNKED]: (payload: unknown) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNKED]: (payload: AudioChunkedPayload) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNK_ERROR]: (payload: AudioProtocolErrorPayload) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECOVERED]: (payload: AudioRecoveryPayload) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECONNECT_ERROR]: (
+    payload: AudioProtocolErrorPayload,
+  ) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED]: (payload: unknown) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION]: (payload: MentorTranscriptionPayload) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK]: (payload: AudioOutputChunkPayload) => void;
@@ -193,6 +260,7 @@ export type LumaSocketListenEvents = {
 export type LumaSocketEmitEvents = {
   [LUMA_SOCKET_EMIT_EVENTS.START_AUDIO]: (payload: StartAudioPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.AUDIO_CHUNK]: (payload: AudioChunkPayload, chunk: AudioBinaryChunk) => void;
+  [LUMA_SOCKET_EMIT_EVENTS.AUDIO_RECONNECT]: (payload: AudioReconnectPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.AUDIO_STOP]: (payload: AudioStopPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.MENTOR_TEXT_DELTA]: (payload: MentorTextDeltaPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.MENTOR_TEXT_END]: (payload: MentorTextEndPayload) => void;
@@ -225,6 +293,20 @@ export interface LumaSocket extends LumaSocketBase {
   onAudioStarted(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STARTED]): this;
 
   onAudioChunked(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNKED]): this;
+
+  reconnectAudio(payload: AudioReconnectPayload): this;
+
+  onAudioChunkError(
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNK_ERROR],
+  ): this;
+
+  onAudioRecovered(
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECOVERED],
+  ): this;
+
+  onAudioReconnectError(
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECONNECT_ERROR],
+  ): this;
 
   onAudioStopped(handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED]): this;
 
