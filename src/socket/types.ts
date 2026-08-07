@@ -159,12 +159,28 @@ export type AudioChunkedPayload = {
   duplicate: boolean;
 };
 
+export const AUDIO_RECOVERY_STATES = {
+  LISTENING: "listening",
+  MENTOR_ACTIVE: "mentor_active",
+  USER_SPEAKING: "user_speaking",
+} as const;
+
+export type AudioRecoveryState = (typeof AUDIO_RECOVERY_STATES)[keyof typeof AUDIO_RECOVERY_STATES];
+
+export const AUDIO_PROVIDER_STATES = {
+  CONNECTED: "connected",
+  RESTARTED: "restarted",
+  NOT_APPLICABLE: "not_applicable",
+} as const;
+
+export type AudioProviderState = (typeof AUDIO_PROVIDER_STATES)[keyof typeof AUDIO_PROVIDER_STATES];
+
 export type AudioRecoveryPayload = {
   type: (typeof LUMA_SOCKET_MESSAGE_TYPES)["AUDIO_RECOVERED"];
   sessionId: string;
   sessionRunId: string;
-  state: "listening" | "mentor_active" | "user_speaking";
-  providerState: "connected" | "restarted" | "not_applicable";
+  state: AudioRecoveryState;
+  providerState: AudioProviderState;
   lastAcceptedAudioSeq: number;
   nextAudioSeq: number;
   clientLastSentAudioSeq: number;
