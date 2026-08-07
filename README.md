@@ -83,6 +83,26 @@ socket.sendAudioChunk(
 socket.stopAudio();
 ```
 
+Recovery responses expose stable public constants for state handling:
+
+```ts
+import {
+  AUDIO_PROVIDER_STATES,
+  AUDIO_RECOVERY_STATES,
+  type AudioRecoveryPayload,
+} from "@japro/luma-sdk";
+
+socket.onAudioRecovered((payload: AudioRecoveryPayload) => {
+  if (payload.state === AUDIO_RECOVERY_STATES.MENTOR_ACTIVE) {
+    // Keep the playback UI active after reconnecting.
+  }
+
+  if (payload.providerState === AUDIO_PROVIDER_STATES.RESTARTED) {
+    // The transcription provider was recreated; replay unacknowledged chunks.
+  }
+});
+```
+
 ## HTTP Client API
 
 ### `createLumaClient(opts)`
@@ -193,6 +213,7 @@ Listener helpers:
 - `onServerConnected(handler)` -> listens `server:connected`
 - `onAudioStarted(handler)` -> listens `audio:started`
 - `onAudioChunked(handler)` -> listens `audio:chunked`
+- `onAudioRecovered(handler)` -> listens `audio:recovered`
 - `onAudioStopped(handler)` -> listens `audio:stopped`
 - `onMentorTranscription(handler)` -> listens `mentor:transcription`
 - `onAudioOutputChunk(handler)` -> listens `audio:output:chunk`
