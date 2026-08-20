@@ -2,6 +2,9 @@ import { AiCapability, AiCapabilityMode, AiCapabilityProvider } from "./api/gene
 import type {
   AiJudgeConfigurationResponse,
   AiJudgeConfigurationValidationResponse,
+  ArchitectAiMentorLessonResponse,
+  ArchitectAiMentorRoleplayConfigurationResponse,
+  ArchitectAiMentorTeacherConfigurationResponse,
   ArchitectCourseResponse,
   AssetResponse,
   BodyTranscribeDictationApiPublicV1AiTranscriptionsPost,
@@ -22,6 +25,9 @@ import type {
 } from "./api/generated-api";
 export type {
   AiCapabilityStatus,
+  ArchitectAiMentorLessonResponse,
+  ArchitectAiMentorRoleplayConfigurationResponse,
+  ArchitectAiMentorTeacherConfigurationResponse,
   CreateDraftResponse,
   DeleteIngestedDocumentResponse,
   GetDraftResponse,
@@ -45,6 +51,13 @@ export type DraftFilesResponse = DraftFile[];
 export type DraftMessage = DraftMessageResponse;
 export type DraftMessagesResponse = DraftMessage[];
 export type GeneratedCourseResponse = ArchitectCourseResponse;
+export type GeneratedCourseAiMentor = ArchitectAiMentorLessonResponse;
+export type GeneratedCourseAiMentorConfiguration =
+  GeneratedCourseAiMentor["aiMentorConfiguration"];
+export type GeneratedCourseAiMentorTeacherConfiguration =
+  ArchitectAiMentorTeacherConfigurationResponse;
+export type GeneratedCourseAiMentorRoleplayConfiguration =
+  ArchitectAiMentorRoleplayConfigurationResponse;
 export type AssetsResponse = AssetResponse[];
 export type GeneratedCourseBundleResponse = {
   course: GeneratedCourseResponse;

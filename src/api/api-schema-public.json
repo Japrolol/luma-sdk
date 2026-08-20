@@ -1605,9 +1605,23 @@
             "type": "string",
             "title": "Name"
           },
-          "aiMentorInstructions": {
-            "type": "string",
-            "title": "Aimentorinstructions"
+          "aiMentorConfiguration": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ArchitectAiMentorTeacherConfigurationResponse"
+              },
+              {
+                "$ref": "#/components/schemas/ArchitectAiMentorRoleplayConfigurationResponse"
+              }
+            ],
+            "title": "Aimentorconfiguration",
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "roleplay": "#/components/schemas/ArchitectAiMentorRoleplayConfigurationResponse",
+                "teacher": "#/components/schemas/ArchitectAiMentorTeacherConfigurationResponse"
+              }
+            }
           },
           "relevantContext": {
             "anyOf": [
@@ -1623,19 +1637,6 @@
           "aiJudgeConfiguration": {
             "$ref": "#/components/schemas/ArchitectAiJudgeConfigurationResponse"
           },
-          "type": {
-            "type": "string",
-            "enum": [
-              "ROLEPLAY",
-              "MENTOR",
-              "TEACHER"
-            ],
-            "title": "Type"
-          },
-          "taskDescription": {
-            "type": "string",
-            "title": "Taskdescription"
-          },
           "ttsPreset": {
             "type": "string",
             "enum": [
@@ -1645,17 +1646,166 @@
             "title": "Ttspreset"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "name",
-          "aiMentorInstructions",
+          "aiMentorConfiguration",
           "aiJudgeConfiguration",
-          "type",
-          "taskDescription",
           "ttsPreset"
         ],
         "title": "ArchitectAiMentorLessonResponse"
+      },
+      "ArchitectAiMentorRoleplayConfigurationResponse": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "roleplay",
+            "title": "Type"
+          },
+          "scenario": {
+            "type": "string",
+            "title": "Scenario"
+          },
+          "aiRole": {
+            "type": "string",
+            "title": "Airole"
+          },
+          "learnerRole": {
+            "type": "string",
+            "title": "Learnerrole"
+          },
+          "characterGoal": {
+            "type": "string",
+            "title": "Charactergoal"
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": [
+              "cooperative",
+              "realistic",
+              "challenging"
+            ],
+            "title": "Difficulty"
+          },
+          "factsAndConstraints": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factsandconstraints"
+          },
+          "openingInstruction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openinginstruction"
+          },
+          "additionalInstructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Additionalinstructions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "scenario",
+          "aiRole",
+          "learnerRole",
+          "characterGoal",
+          "difficulty"
+        ],
+        "title": "ArchitectAiMentorRoleplayConfigurationResponse"
+      },
+      "ArchitectAiMentorTeacherConfigurationResponse": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "teacher",
+            "title": "Type"
+          },
+          "taskGoal": {
+            "type": "string",
+            "title": "Taskgoal"
+          },
+          "expertise": {
+            "type": "string",
+            "title": "Expertise"
+          },
+          "contentScope": {
+            "type": "string",
+            "title": "Contentscope"
+          },
+          "teachingStyle": {
+            "type": "string",
+            "enum": [
+              "explain_and_practice",
+              "guided_discovery",
+              "socratic"
+            ],
+            "title": "Teachingstyle"
+          },
+          "feedbackGuidance": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedbackguidance"
+          },
+          "openingInstruction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openinginstruction"
+          },
+          "additionalInstructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Additionalinstructions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "taskGoal",
+          "expertise",
+          "contentScope",
+          "teachingStyle"
+        ],
+        "title": "ArchitectAiMentorTeacherConfigurationResponse"
       },
       "ArchitectChapterResponse": {
         "properties": {
