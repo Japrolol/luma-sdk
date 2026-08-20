@@ -6,6 +6,8 @@ export const LUMA_SOCKET_MESSAGE_TYPES = {
   AUDIO_RECONNECT: "audio.reconnect",
   AUDIO_RECOVERED: "audio.recovered",
   AUDIO_STOP: "audio.stop",
+  CLIENT_SPEECH_START: "client.speech.start",
+  CLIENT_SPEECH_END: "client.speech.end",
   MENTOR_TEXT_DELTA: "mentor.text.delta",
   MENTOR_TEXT_END: "mentor.text.end",
   MENTOR_TEXT_ERROR: "mentor.text.error",
@@ -48,6 +50,8 @@ export const LUMA_SOCKET_EMIT_EVENTS = {
   AUDIO_CHUNK: "audio_chunk",
   AUDIO_RECONNECT: "audio_reconnect",
   AUDIO_STOP: "audio_stop",
+  CLIENT_SPEECH_START: "client_speech_start",
+  CLIENT_SPEECH_END: "client_speech_end",
   MENTOR_TEXT_DELTA: "mentor_text_delta",
   MENTOR_TEXT_END: "mentor_text_end",
   MENTOR_TEXT_ERROR: "mentor_text_error",
@@ -59,6 +63,13 @@ export const TRANSCRIPTION_MODES = {
   PAUSE_BATCH: "pause_batch",
   REALTIME_STREAM: "realtime_stream",
 } as const;
+
+export const LUMA_CAPTURE_PROFILES = {
+  CONTINUOUS_PCM: "continuous_pcm",
+  VAD_SEGMENTED: "vad_segmented",
+} as const;
+
+export type LumaCaptureProfile = (typeof LUMA_CAPTURE_PROFILES)[keyof typeof LUMA_CAPTURE_PROFILES];
 
 export type AudioBinaryChunk = ArrayBuffer | Uint8Array | Buffer;
 
@@ -97,6 +108,16 @@ export type AudioStopPayload = {
   type: (typeof LUMA_SOCKET_MESSAGE_TYPES)["AUDIO_STOP"];
 };
 
+export type ClientSpeechBoundaryPayload = {
+  type:
+    | (typeof LUMA_SOCKET_MESSAGE_TYPES)["CLIENT_SPEECH_START"]
+    | (typeof LUMA_SOCKET_MESSAGE_TYPES)["CLIENT_SPEECH_END"];
+  sessionRunId: string;
+  boundarySeq: number;
+  tsMs: number;
+  lastAudioSeq: number;
+};
+
 export type MentorTextDeltaPayload = {
   type: (typeof LUMA_SOCKET_MESSAGE_TYPES)["MENTOR_TEXT_DELTA"];
   jobId: string;
@@ -130,7 +151,16 @@ export type ServerConnectedPayload = {
 
 export type TranscriptionSessionPlan = {
   effectiveTranscriptionMode: (typeof TRANSCRIPTION_MODES)[keyof typeof TRANSCRIPTION_MODES];
+  captureProfile: LumaCaptureProfile;
+  endpointOwner: string;
+  interruptionMarker: string;
+  supportsSpeechEvents: boolean;
   providerAdapter: string;
+  boundarySource: string;
+  segmentFinalizeMode: string;
+  supportsPartialTranscripts: boolean;
+  supportsWordTimestamps: boolean;
+  supportsSessionRecovery: boolean;
   [key: string]: unknown;
 };
 
@@ -207,6 +237,19 @@ export type MentorStreamEventEnvelope<TType extends string, TData> = {
 
 export type MentorTranscriptionData = {
   text: string;
+  timing?: MentorTranscriptionTimingData | null;
+};
+
+export type MentorTranscriptionTimingData = {
+  elapsedMs: number;
+  speechMs: number;
+  pauseCount: number;
+  longestPauseMs: number;
+  averagePauseMs?: number | null;
+  segmentCount: number;
+  wordCount: number;
+  wordsPerMinute?: number | null;
+  timingPrecision: string;
 };
 
 export type AudioOutputChunkData = {
@@ -281,6 +324,8 @@ export type LumaSocketEmitEvents = {
   ) => void;
   [LUMA_SOCKET_EMIT_EVENTS.AUDIO_RECONNECT]: (payload: AudioReconnectPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.AUDIO_STOP]: (payload: AudioStopPayload) => void;
+  [LUMA_SOCKET_EMIT_EVENTS.CLIENT_SPEECH_START]: (payload: ClientSpeechBoundaryPayload) => void;
+  [LUMA_SOCKET_EMIT_EVENTS.CLIENT_SPEECH_END]: (payload: ClientSpeechBoundaryPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.MENTOR_TEXT_DELTA]: (payload: MentorTextDeltaPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.MENTOR_TEXT_END]: (payload: MentorTextEndPayload) => void;
   [LUMA_SOCKET_EMIT_EVENTS.MENTOR_TEXT_ERROR]: (payload: MentorTextErrorPayload) => void;
@@ -296,6 +341,10 @@ export interface LumaSocket extends LumaSocketBase {
   sendAudioChunk(payload: AudioChunkPayload, chunk: AudioBinaryChunk): this;
 
   stopAudio(payload?: AudioStopPayload): this;
+
+  sendClientSpeechStart(payload: ClientSpeechBoundaryPayload): this;
+
+  sendClientSpeechEnd(payload: ClientSpeechBoundaryPayload): this;
 
   sendMentorTextDelta(payload: MentorTextDeltaPayload): this;
 
@@ -352,7 +401,6 @@ export interface LumaSocket extends LumaSocketBase {
   onAudioOutputError(
     handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ERROR],
   ): this;
-
   onAudioOutputComplete(
     handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_COMPLETE],
   ): this;

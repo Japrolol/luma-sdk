@@ -3,6 +3,7 @@ import {
   AudioChunkPayload,
   AudioReconnectPayload,
   AudioStopPayload,
+  ClientSpeechBoundaryPayload,
   AudioBinaryChunk,
   LUMA_SOCKET_EMIT_EVENTS,
   LUMA_SOCKET_LISTEN_EVENTS,
@@ -64,6 +65,16 @@ export const createLumaSocket = (opts: LumaSocketClientOptions): LumaSocket => {
       LUMA_SOCKET_EMIT_EVENTS.AUDIO_STOP,
       payload ?? { type: LUMA_SOCKET_MESSAGE_TYPES.AUDIO_STOP },
     );
+    return socket;
+  };
+
+  socket.sendClientSpeechStart = (payload: ClientSpeechBoundaryPayload) => {
+    socket.emit(LUMA_SOCKET_EMIT_EVENTS.CLIENT_SPEECH_START, payload);
+    return socket;
+  };
+
+  socket.sendClientSpeechEnd = (payload: ClientSpeechBoundaryPayload) => {
+    socket.emit(LUMA_SOCKET_EMIT_EVENTS.CLIENT_SPEECH_END, payload);
     return socket;
   };
 
@@ -133,7 +144,6 @@ export const createLumaSocket = (opts: LumaSocketClientOptions): LumaSocket => {
     socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECONNECT_ERROR, handler);
     return socket;
   };
-
   socket.onAudioStopped = (
     handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED],
   ) => {

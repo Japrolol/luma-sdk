@@ -202,6 +202,8 @@ Emit helpers:
 
 - `startAudio(payload)` -> emits `start_audio`
 - `sendAudioChunk(payload, chunk)` -> emits `audio_chunk`
+- `sendClientSpeechStart(payload)` -> emits `client_speech_start`
+- `sendClientSpeechEnd(payload)` -> emits `client_speech_end`
 - `stopAudio(payload?)` -> emits `audio_stop`
 - `sendMentorTextDelta(payload)` -> emits `mentor_text_delta`
 - `sendMentorTextEnd(payload)` -> emits `mentor_text_end`
