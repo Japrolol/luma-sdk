@@ -304,18 +304,61 @@ export interface ArchitectAiJudgeScoreGuidanceResponse {
 export interface ArchitectAiMentorLessonResponse {
   /** Name */
   name: string;
-  /** Aimentorinstructions */
-  aiMentorInstructions: string;
+  /** Aimentorconfiguration */
+  aiMentorConfiguration:
+    | ({
+        type: "roleplay";
+      } & ArchitectAiMentorRoleplayConfigurationResponse)
+    | ({
+        type: "teacher";
+      } & ArchitectAiMentorTeacherConfigurationResponse);
   /** Relevantcontext */
   relevantContext?: string | null;
   aiJudgeConfiguration: ArchitectAiJudgeConfigurationResponse;
-  /** Type */
-  type: "ROLEPLAY" | "MENTOR" | "TEACHER";
-  /** Taskdescription */
-  taskDescription: string;
   /** Ttspreset */
   ttsPreset: "male" | "female";
-  [key: string]: any;
+}
+
+/** ArchitectAiMentorRoleplayConfigurationResponse */
+export interface ArchitectAiMentorRoleplayConfigurationResponse {
+  /** Type */
+  type: "roleplay";
+  /** Scenario */
+  scenario: string;
+  /** Airole */
+  aiRole: string;
+  /** Learnerrole */
+  learnerRole: string;
+  /** Charactergoal */
+  characterGoal: string;
+  /** Difficulty */
+  difficulty: "cooperative" | "realistic" | "challenging";
+  /** Factsandconstraints */
+  factsAndConstraints?: string | null;
+  /** Openinginstruction */
+  openingInstruction?: string | null;
+  /** Additionalinstructions */
+  additionalInstructions?: string | null;
+}
+
+/** ArchitectAiMentorTeacherConfigurationResponse */
+export interface ArchitectAiMentorTeacherConfigurationResponse {
+  /** Type */
+  type: "teacher";
+  /** Taskgoal */
+  taskGoal: string;
+  /** Expertise */
+  expertise: string;
+  /** Contentscope */
+  contentScope: string;
+  /** Teachingstyle */
+  teachingStyle: "explain_and_practice" | "guided_discovery" | "socratic";
+  /** Feedbackguidance */
+  feedbackGuidance?: string | null;
+  /** Openinginstruction */
+  openingInstruction?: string | null;
+  /** Additionalinstructions */
+  additionalInstructions?: string | null;
 }
 
 /** ArchitectChapterResponse */
