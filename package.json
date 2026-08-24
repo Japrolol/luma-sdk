@@ -1,6 +1,6 @@
 {
   "name": "@japro/luma-sdk",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "description": "Luma API SDK",
   "license": "MIT",
   "type": "module",

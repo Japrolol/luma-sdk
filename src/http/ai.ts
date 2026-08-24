@@ -4,6 +4,8 @@ import {
   CreateEmbeddingsResponse,
   GenerateAiJudgeConfigurationOptions,
   GenerateAiJudgeConfigurationResponse,
+  GenerateAiMentorConfigurationOptions,
+  GenerateAiMentorConfigurationResponse,
   GenerateTranslationsOptions,
   GenerateTranslationsResponse,
   TranscribeDictationOptions,
@@ -26,6 +28,17 @@ export class LumaAiClient {
   ): Promise<GenerateAiJudgeConfigurationResponse> {
     const response =
       await this.apiClient.api.generateJudgeConfigurationApiPublicV1AiJudgeConfigurationGeneratePost(
+        opts,
+      );
+
+    return response.data;
+  }
+
+  async generateMentorConfiguration(
+    opts: GenerateAiMentorConfigurationOptions,
+  ): Promise<GenerateAiMentorConfigurationResponse> {
+    const response =
+      await this.apiClient.api.generateMentorConfigurationApiPublicV1AiMentorConfigurationGeneratePost(
         opts,
       );
 
