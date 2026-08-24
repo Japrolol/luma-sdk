@@ -23,6 +23,12 @@ export enum AiRuntimeResolutionErrorCode {
   Disabled = "disabled",
 }
 
+/** AiMentorConfigurationType */
+export enum AiMentorConfigurationType {
+  Teacher = "teacher",
+  Roleplay = "roleplay",
+}
+
 /** AiCapabilityProvider */
 export enum AiCapabilityProvider {
   Luma = "luma",
@@ -645,8 +651,7 @@ export interface GenerateAiMentorConfigurationRequest {
   messages: PublicAiMessage[];
   /** Temperature */
   temperature?: number | null;
-  /** Configurationtype */
-  configurationType: "teacher" | "roleplay";
+  configurationType: AiMentorConfigurationType;
 }
 
 /** GetDraftResponse */

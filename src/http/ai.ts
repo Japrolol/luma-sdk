@@ -1,5 +1,6 @@
-import { API } from "../api/generated-api";
+import { AiMentorConfigurationType, API } from "../api/generated-api";
 import {
+  AI_MENTOR_CONFIGURATION_TYPES,
   CreateEmbeddingsOptions,
   CreateEmbeddingsResponse,
   GenerateAiJudgeConfigurationOptions,
@@ -37,9 +38,13 @@ export class LumaAiClient {
   async generateMentorConfiguration(
     opts: GenerateAiMentorConfigurationOptions,
   ): Promise<GenerateAiMentorConfigurationResponse> {
+    const configurationType =
+      opts.configurationType === AI_MENTOR_CONFIGURATION_TYPES.TEACHER
+        ? AiMentorConfigurationType.Teacher
+        : AiMentorConfigurationType.Roleplay;
     const response =
       await this.apiClient.api.generateMentorConfigurationApiPublicV1AiMentorConfigurationGeneratePost(
-        opts,
+        { ...opts, configurationType },
       );
 
     return response.data;

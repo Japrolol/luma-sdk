@@ -76,7 +76,19 @@ export type MentorJudgeOptions = StructuredGenerationRequest;
 export type MentorJudgeResponse = JudgeResponse;
 export type GenerateAiJudgeConfigurationOptions = StructuredGenerationRequest;
 export type GenerateAiJudgeConfigurationResponse = AiJudgeConfigurationResponse;
-export type GenerateAiMentorConfigurationOptions = GenerateAiMentorConfigurationRequest;
+export const AI_MENTOR_CONFIGURATION_TYPES = {
+  TEACHER: "teacher",
+  ROLEPLAY: "roleplay",
+} as const;
+
+export type AiMentorConfigurationType =
+  (typeof AI_MENTOR_CONFIGURATION_TYPES)[keyof typeof AI_MENTOR_CONFIGURATION_TYPES];
+export type GenerateAiMentorConfigurationOptions = Omit<
+  GenerateAiMentorConfigurationRequest,
+  "configurationType"
+> & {
+  configurationType: AiMentorConfigurationType;
+};
 export type GenerateAiMentorConfigurationResponse =
   | AiMentorTeacherConfigurationResponse
   | AiMentorRoleplayConfigurationResponse;
