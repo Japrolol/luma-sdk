@@ -1533,6 +1533,14 @@
         ],
         "title": "AiJudgeValidationIssue"
       },
+      "AiMentorConfigurationType": {
+        "type": "string",
+        "enum": [
+          "teacher",
+          "roleplay"
+        ],
+        "title": "AiMentorConfigurationType"
+      },
       "AiMentorRoleplayConfigurationResponse": {
         "properties": {
           "scenario": {
@@ -2559,12 +2567,7 @@
             "title": "Temperature"
           },
           "configurationType": {
-            "type": "string",
-            "enum": [
-              "teacher",
-              "roleplay"
-            ],
-            "title": "Configurationtype"
+            "$ref": "#/components/schemas/AiMentorConfigurationType"
           }
         },
         "type": "object",
