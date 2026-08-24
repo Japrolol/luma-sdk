@@ -1,5 +1,7 @@
 import { AiCapability, AiCapabilityMode, AiCapabilityProvider } from "./api/generated-api";
 import type {
+  AiMentorRoleplayConfigurationResponse,
+  AiMentorTeacherConfigurationResponse,
   AiJudgeConfigurationResponse,
   AiJudgeConfigurationValidationResponse,
   ArchitectAiMentorLessonResponse,
@@ -14,6 +16,7 @@ import type {
   DraftMessageResponse,
   EmbeddingsRequest,
   EmbeddingsResponse,
+  GenerateAiMentorConfigurationRequest,
   JudgeResponse,
   MentorChatRequest,
   MentorChatResponse,
@@ -70,6 +73,10 @@ export type MentorJudgeOptions = StructuredGenerationRequest;
 export type MentorJudgeResponse = JudgeResponse;
 export type GenerateAiJudgeConfigurationOptions = StructuredGenerationRequest;
 export type GenerateAiJudgeConfigurationResponse = AiJudgeConfigurationResponse;
+export type GenerateAiMentorConfigurationOptions = GenerateAiMentorConfigurationRequest;
+export type GenerateAiMentorConfigurationResponse =
+  | AiMentorTeacherConfigurationResponse
+  | AiMentorRoleplayConfigurationResponse;
 export type ValidateAiJudgeConfigurationOptions = StructuredGenerationRequest;
 export type ValidateAiJudgeConfigurationResponse = AiJudgeConfigurationValidationResponse;
 export type CreateEmbeddingsOptions = EmbeddingsRequest;
@@ -96,6 +103,7 @@ export const LUMA_AI_CAPABILITIES = {
   COURSE_GENERATION_EMBEDDINGS: AiCapability.CourseGenerationEmbeddings,
   AI_MENTOR_CHAT: AiCapability.AiMentorChat,
   AI_MENTOR_JUDGE: AiCapability.AiMentorJudge,
+  AI_MENTOR_CONFIGURATION_GENERATOR: AiCapability.AiMentorConfigurationGenerator,
   AI_JUDGE_CONFIGURATION_GENERATOR: AiCapability.AiJudgeConfigurationGenerator,
   AI_JUDGE_CONFIGURATION_VALIDATOR: AiCapability.AiJudgeConfigurationValidator,
   AI_MENTOR_RAG_EMBEDDINGS: AiCapability.AiMentorRagEmbeddings,

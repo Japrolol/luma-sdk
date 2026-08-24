@@ -309,6 +309,66 @@
         ]
       }
     },
+    "/api/public/v1/ai/mentor-configuration/generate": {
+      "post": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Generate AI Mentor Configuration With Custom Runtime",
+        "operationId": "generate_mentor_configuration_api_public_v1_ai_mentor_configuration_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateAiMentorConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/AiMentorTeacherConfigurationResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AiMentorRoleplayConfigurationResponse"
+                    }
+                  ],
+                  "title": "Response Generate Mentor Configuration Api Public V1 Ai Mentor Configuration Generate Post"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
     "/api/public/v1/ai/judge-configuration/generate": {
       "post": {
         "tags": [
@@ -1047,6 +1107,7 @@
           "courseGenerationEmbeddings",
           "aiMentorChat",
           "aiMentorJudge",
+          "aiMentorConfigurationGenerator",
           "aiJudgeConfigurationGenerator",
           "aiJudgeConfigurationValidator",
           "aiMentorRagEmbeddings",
@@ -1471,6 +1532,158 @@
           "correction"
         ],
         "title": "AiJudgeValidationIssue"
+      },
+      "AiMentorRoleplayConfigurationResponse": {
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Scenario"
+          },
+          "aiRole": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Airole"
+          },
+          "learnerRole": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Learnerrole"
+          },
+          "characterGoal": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Charactergoal"
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": [
+              "cooperative",
+              "realistic",
+              "challenging"
+            ],
+            "title": "Difficulty"
+          },
+          "factsAndConstraints": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factsandconstraints"
+          },
+          "openingInstruction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openinginstruction"
+          },
+          "additionalInstructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Additionalinstructions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario",
+          "aiRole",
+          "learnerRole",
+          "characterGoal",
+          "difficulty",
+          "factsAndConstraints",
+          "openingInstruction",
+          "additionalInstructions"
+        ],
+        "title": "AiMentorRoleplayConfigurationResponse"
+      },
+      "AiMentorTeacherConfigurationResponse": {
+        "properties": {
+          "taskGoal": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Taskgoal"
+          },
+          "expertise": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Expertise"
+          },
+          "contentScope": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Contentscope"
+          },
+          "teachingStyle": {
+            "type": "string",
+            "enum": [
+              "explain_and_practice",
+              "guided_discovery",
+              "socratic"
+            ],
+            "title": "Teachingstyle"
+          },
+          "feedbackGuidance": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedbackguidance"
+          },
+          "openingInstruction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openinginstruction"
+          },
+          "additionalInstructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Additionalinstructions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "taskGoal",
+          "expertise",
+          "contentScope",
+          "teachingStyle",
+          "feedbackGuidance",
+          "openingInstruction",
+          "additionalInstructions"
+        ],
+        "title": "AiMentorTeacherConfigurationResponse"
       },
       "AiRuntimeResolutionErrorCode": {
         "type": "string",
@@ -2324,6 +2537,42 @@
           "embeddings"
         ],
         "title": "EmbeddingsResponse"
+      },
+      "GenerateAiMentorConfigurationRequest": {
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/PublicAiMessage"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature"
+          },
+          "configurationType": {
+            "type": "string",
+            "enum": [
+              "teacher",
+              "roleplay"
+            ],
+            "title": "Configurationtype"
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages",
+          "configurationType"
+        ],
+        "title": "GenerateAiMentorConfigurationRequest"
       },
       "GetDraftResponse": {
         "properties": {

@@ -43,6 +43,7 @@ export enum AiCapability {
   CourseGenerationEmbeddings = "courseGenerationEmbeddings",
   AiMentorChat = "aiMentorChat",
   AiMentorJudge = "aiMentorJudge",
+  AiMentorConfigurationGenerator = "aiMentorConfigurationGenerator",
   AiJudgeConfigurationGenerator = "aiJudgeConfigurationGenerator",
   AiJudgeConfigurationValidator = "aiJudgeConfigurationValidator",
   AiMentorRagEmbeddings = "aiMentorRagEmbeddings",
@@ -243,6 +244,65 @@ export interface AiJudgeValidationIssue {
    * @maxLength 220
    */
   correction: string;
+}
+
+/** AiMentorRoleplayConfigurationResponse */
+export interface AiMentorRoleplayConfigurationResponse {
+  /**
+   * Scenario
+   * @minLength 1
+   */
+  scenario: string;
+  /**
+   * Airole
+   * @minLength 1
+   */
+  aiRole: string;
+  /**
+   * Learnerrole
+   * @minLength 1
+   */
+  learnerRole: string;
+  /**
+   * Charactergoal
+   * @minLength 1
+   */
+  characterGoal: string;
+  /** Difficulty */
+  difficulty: "cooperative" | "realistic" | "challenging";
+  /** Factsandconstraints */
+  factsAndConstraints: string | null;
+  /** Openinginstruction */
+  openingInstruction: string | null;
+  /** Additionalinstructions */
+  additionalInstructions: string | null;
+}
+
+/** AiMentorTeacherConfigurationResponse */
+export interface AiMentorTeacherConfigurationResponse {
+  /**
+   * Taskgoal
+   * @minLength 1
+   */
+  taskGoal: string;
+  /**
+   * Expertise
+   * @minLength 1
+   */
+  expertise: string;
+  /**
+   * Contentscope
+   * @minLength 1
+   */
+  contentScope: string;
+  /** Teachingstyle */
+  teachingStyle: "explain_and_practice" | "guided_discovery" | "socratic";
+  /** Feedbackguidance */
+  feedbackGuidance: string | null;
+  /** Openinginstruction */
+  openingInstruction: string | null;
+  /** Additionalinstructions */
+  additionalInstructions: string | null;
 }
 
 /** ArchitectAiJudgeBlockingErrorResponse */
@@ -572,6 +632,16 @@ export interface EmbeddingsRequest {
 export interface EmbeddingsResponse {
   /** Embeddings */
   embeddings: number[][];
+}
+
+/** GenerateAiMentorConfigurationRequest */
+export interface GenerateAiMentorConfigurationRequest {
+  /** Messages */
+  messages: PublicAiMessage[];
+  /** Temperature */
+  temperature?: number | null;
+  /** Configurationtype */
+  configurationType: "teacher" | "roleplay";
 }
 
 /** GetDraftResponse */
@@ -1026,6 +1096,33 @@ export class API<
     ) =>
       this.request<JudgeResponse, void | HTTPValidationError>({
         path: `/api/public/v1/ai/mentor/judge`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name GenerateMentorConfigurationApiPublicV1AiMentorConfigurationGeneratePost
+     * @summary Generate AI Mentor Configuration With Custom Runtime
+     * @request POST:/api/public/v1/ai/mentor-configuration/generate
+     * @secure
+     */
+    generateMentorConfigurationApiPublicV1AiMentorConfigurationGeneratePost: (
+      data: GenerateAiMentorConfigurationRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        | AiMentorTeacherConfigurationResponse
+        | AiMentorRoleplayConfigurationResponse,
+        void | HTTPValidationError
+      >({
+        path: `/api/public/v1/ai/mentor-configuration/generate`,
         method: "POST",
         body: data,
         secure: true,
