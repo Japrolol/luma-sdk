@@ -304,6 +304,11 @@ export interface ArchitectAiJudgeScoreGuidanceResponse {
 export interface ArchitectAiMentorLessonResponse {
   /** Name */
   name: string;
+  /**
+   * Taskdescription
+   * Learner-facing instructions describing the task to complete with the AI mentor.
+   */
+  taskDescription: string;
   /** Aimentorconfiguration */
   aiMentorConfiguration:
     | ({

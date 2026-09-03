@@ -1605,6 +1605,11 @@
             "type": "string",
             "title": "Name"
           },
+          "taskDescription": {
+            "type": "string",
+            "title": "Taskdescription",
+            "description": "Learner-facing instructions describing the task to complete with the AI mentor."
+          },
           "aiMentorConfiguration": {
             "oneOf": [
               {
@@ -1650,6 +1655,7 @@
         "type": "object",
         "required": [
           "name",
+          "taskDescription",
           "aiMentorConfiguration",
           "aiJudgeConfiguration",
           "ttsPreset"
