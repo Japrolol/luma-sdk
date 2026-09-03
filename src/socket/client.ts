@@ -1,7 +1,9 @@
 import { io } from "socket.io-client";
 import {
   AudioChunkPayload,
+  AudioReconnectPayload,
   AudioStopPayload,
+  ClientSpeechBoundaryPayload,
   AudioBinaryChunk,
   LUMA_SOCKET_EMIT_EVENTS,
   LUMA_SOCKET_LISTEN_EVENTS,
@@ -11,7 +13,8 @@ import {
   MentorTextDeltaPayload,
   MentorTextEndPayload,
   MentorTextErrorPayload,
-  StartAudioPayload, AudioTriggerTTSPayload,
+  StartAudioPayload,
+  AudioTriggerTTSPayload,
 } from "./types";
 
 export type LumaSocketClientOptions = {
@@ -52,8 +55,26 @@ export const createLumaSocket = (opts: LumaSocketClientOptions): LumaSocket => {
     return socket;
   };
 
+  socket.reconnectAudio = (payload: AudioReconnectPayload) => {
+    socket.emit(LUMA_SOCKET_EMIT_EVENTS.AUDIO_RECONNECT, payload);
+    return socket;
+  };
+
   socket.stopAudio = (payload?: AudioStopPayload) => {
-    socket.emit(LUMA_SOCKET_EMIT_EVENTS.AUDIO_STOP, payload ?? { type: LUMA_SOCKET_MESSAGE_TYPES.AUDIO_STOP });
+    socket.emit(
+      LUMA_SOCKET_EMIT_EVENTS.AUDIO_STOP,
+      payload ?? { type: LUMA_SOCKET_MESSAGE_TYPES.AUDIO_STOP },
+    );
+    return socket;
+  };
+
+  socket.sendClientSpeechStart = (payload: ClientSpeechBoundaryPayload) => {
+    socket.emit(LUMA_SOCKET_EMIT_EVENTS.CLIENT_SPEECH_START, payload);
+    return socket;
+  };
+
+  socket.sendClientSpeechEnd = (payload: ClientSpeechBoundaryPayload) => {
+    socket.emit(LUMA_SOCKET_EMIT_EVENTS.CLIENT_SPEECH_END, payload);
     return socket;
   };
 
@@ -82,35 +103,72 @@ export const createLumaSocket = (opts: LumaSocketClientOptions): LumaSocket => {
     return socket;
   };
 
-  socket.onServerConnected = (handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.SERVER_CONNECTED]) => {
+  socket.onServerConnected = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.SERVER_CONNECTED],
+  ) => {
     socket.on(LUMA_SOCKET_LISTEN_EVENTS.SERVER_CONNECTED, handler);
     return socket;
   };
 
-  socket.onAudioStarted = (handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STARTED]) => {
+  socket.onAudioStarted = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STARTED],
+  ) => {
     socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STARTED, handler);
     return socket;
   };
 
-  socket.onAudioChunked = (handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNKED]) => {
+  socket.onAudioChunked = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNKED],
+  ) => {
     socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNKED, handler);
     return socket;
   };
 
-  socket.onAudioStopped = (handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED]) => {
+  socket.onAudioChunkError = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNK_ERROR],
+  ) => {
+    socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_CHUNK_ERROR, handler);
+    return socket;
+  };
+
+  socket.onAudioRecovered = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECOVERED],
+  ) => {
+    socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECOVERED, handler);
+    return socket;
+  };
+
+  socket.onAudioReconnectError = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECONNECT_ERROR],
+  ) => {
+    socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECONNECT_ERROR, handler);
+    return socket;
+  };
+  socket.onAudioStopped = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED],
+  ) => {
     socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED, handler);
     return socket;
   };
 
-  socket.onMentorTranscription = (
-    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION],
+  socket.onLearnerTranscription = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION],
   ) => {
-    socket.on(LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION, handler);
+    socket.on(LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION, handler);
     return socket;
   };
 
-  socket.onAudioOutputChunk = (handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK]) => {
+  socket.onAudioOutputChunk = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK],
+  ) => {
     socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK, handler);
+    return socket;
+  };
+
+  socket.onAudioOutputAlignment = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ALIGNMENT],
+  ) => {
+    socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ALIGNMENT, handler);
     return socket;
   };
 
@@ -121,7 +179,9 @@ export const createLumaSocket = (opts: LumaSocketClientOptions): LumaSocket => {
     return socket;
   };
 
-  socket.onAudioOutputError = (handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ERROR]) => {
+  socket.onAudioOutputError = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ERROR],
+  ) => {
     socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ERROR, handler);
     return socket;
   };

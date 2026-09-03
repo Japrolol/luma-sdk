@@ -4,6 +4,7 @@ import {
   MentorGenerateChatResponse,
   MentorJudgeOptions,
   MentorJudgeResponse,
+  MentorStreamRequestOptions,
 } from "../types";
 
 export class LumaMentorClient {
@@ -11,16 +12,19 @@ export class LumaMentorClient {
 
   streamChat(
     opts: MentorChatOptions,
+    requestOptions: MentorStreamRequestOptions = {},
   ): ReturnType<API<unknown>["api"]["mentorChatApiPublicV1AiMentorChatPost"]> {
     return this.apiClient.api.mentorChatApiPublicV1AiMentorChatPost(opts, {
       format: "stream",
+      signal: requestOptions.signal,
     });
   }
 
   chat(
     opts: MentorChatOptions,
+    requestOptions: MentorStreamRequestOptions = {},
   ): ReturnType<API<unknown>["api"]["mentorChatApiPublicV1AiMentorChatPost"]> {
-    return this.streamChat(opts);
+    return this.streamChat(opts, requestOptions);
   }
 
   async generateChat(opts: MentorChatOptions): Promise<MentorGenerateChatResponse> {
