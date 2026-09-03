@@ -1,5 +1,7 @@
 import { Socket } from "socket.io-client";
 
+import type { LumaVoiceTimingPrecision } from "./constants";
+
 export const LUMA_SOCKET_MESSAGE_TYPES = {
   AUDIO_START: "audio.start",
   AUDIO_CHUNK: "audio.chunk",
@@ -30,7 +32,8 @@ export const LUMA_SOCKET_LISTEN_EVENTS = {
   AUDIO_RECOVERED: "audio:recovered",
   AUDIO_RECONNECT_ERROR: "audio:reconnect_error",
   AUDIO_STOPPED: "audio:stopped",
-  MENTOR_TRANSCRIPTION: "mentor:transcription",
+  LEARNER_TRANSCRIPTION: "learner:transcription",
+  AUDIO_OUTPUT_ALIGNMENT: "audio:output:alignment",
   AUDIO_OUTPUT_CHUNK: "audio:output:chunk",
   AUDIO_OUTPUT_INTERRUPTED: "audio:output:interrupted",
   AUDIO_OUTPUT_ERROR: "audio:output:error",
@@ -38,7 +41,8 @@ export const LUMA_SOCKET_LISTEN_EVENTS = {
 } as const;
 
 export const LUMA_MENTOR_STREAM_EVENT_TYPES = {
-  MENTOR_TRANSCRIPTION: "mentor.transcription",
+  LEARNER_TRANSCRIPTION: "learner.transcription",
+  AUDIO_OUTPUT_ALIGNMENT: "audio.output.alignment",
   AUDIO_OUTPUT_CHUNK: "audio.output.chunk",
   AUDIO_OUTPUT_INTERRUPTED: "audio.output.interrupted",
   AUDIO_OUTPUT_ERROR: "audio.output.error",
@@ -157,7 +161,6 @@ export type TranscriptionSessionPlan = {
   supportsSpeechEvents: boolean;
   providerAdapter: string;
   boundarySource: string;
-  segmentFinalizeMode: string;
   supportsPartialTranscripts: boolean;
   supportsWordTimestamps: boolean;
   supportsSessionRecovery: boolean;
@@ -235,12 +238,24 @@ export type MentorStreamEventEnvelope<TType extends string, TData> = {
   data: TData;
 };
 
-export type MentorTranscriptionData = {
+export const LEARNER_TRANSCRIPT_STATUSES = {
+  PARTIAL: "partial",
+  FINAL: "final",
+} as const;
+
+export type LearnerTranscriptStatus =
+  (typeof LEARNER_TRANSCRIPT_STATUSES)[keyof typeof LEARNER_TRANSCRIPT_STATUSES];
+
+export type LearnerTranscriptionData = {
   text: string;
-  timing?: MentorTranscriptionTimingData | null;
+  turnId: string;
+  segmentId: string;
+  revision: number;
+  status: LearnerTranscriptStatus;
+  timing?: LearnerTranscriptionTimingData | null;
 };
 
-export type MentorTranscriptionTimingData = {
+export type LearnerTranscriptionTimingData = {
   elapsedMs: number;
   speechMs: number;
   pauseCount: number;
@@ -249,7 +264,7 @@ export type MentorTranscriptionTimingData = {
   segmentCount: number;
   wordCount: number;
   wordsPerMinute?: number | null;
-  timingPrecision: string;
+  timingPrecision: LumaVoiceTimingPrecision;
 };
 
 export type AudioOutputChunkData = {
@@ -259,8 +274,20 @@ export type AudioOutputChunkData = {
   sampleRate?: number | null;
 };
 
+export type SpeechAlignmentWord = {
+  text: string;
+  startMs: number;
+  endMs: number;
+};
+
+export type AudioOutputAlignmentData = {
+  sequence: number;
+  words: SpeechAlignmentWord[];
+};
+
 export type AudioOutputInterruptedData = {
   reason: string;
+  interruptedTurnId: string | null;
 };
 
 export type AudioOutputErrorData = {
@@ -273,14 +300,19 @@ export type AudioOutputCompleteData = {
   totalChunks: number;
 };
 
-export type MentorTranscriptionPayload = MentorStreamEventEnvelope<
-  (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["MENTOR_TRANSCRIPTION"],
-  MentorTranscriptionData
+export type LearnerTranscriptionPayload = MentorStreamEventEnvelope<
+  (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["LEARNER_TRANSCRIPTION"],
+  LearnerTranscriptionData
 >;
 
 export type AudioOutputChunkPayload = MentorStreamEventEnvelope<
   (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["AUDIO_OUTPUT_CHUNK"],
   AudioOutputChunkData
+>;
+
+export type AudioOutputAlignmentPayload = MentorStreamEventEnvelope<
+  (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["AUDIO_OUTPUT_ALIGNMENT"],
+  AudioOutputAlignmentData
 >;
 
 export type AudioOutputInterruptedPayload = MentorStreamEventEnvelope<
@@ -307,7 +339,10 @@ export type LumaSocketListenEvents = {
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECOVERED]: (payload: AudioRecoveryPayload) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_RECONNECT_ERROR]: (payload: AudioProtocolErrorPayload) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED]: (payload: unknown) => void;
-  [LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION]: (payload: MentorTranscriptionPayload) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION]: (payload: LearnerTranscriptionPayload) => void;
+  [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ALIGNMENT]: (
+    payload: AudioOutputAlignmentPayload,
+  ) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK]: (payload: AudioOutputChunkPayload) => void;
   [LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_INTERRUPTED]: (
     payload: AudioOutputInterruptedPayload,
@@ -386,12 +421,16 @@ export interface LumaSocket extends LumaSocketBase {
     handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_STOPPED],
   ): this;
 
-  onMentorTranscription(
-    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION],
+  onLearnerTranscription(
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION],
   ): this;
 
   onAudioOutputChunk(
     handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK],
+  ): this;
+
+  onAudioOutputAlignment(
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ALIGNMENT],
   ): this;
 
   onAudioOutputInterrupted(

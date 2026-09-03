@@ -151,10 +151,10 @@ export const createLumaSocket = (opts: LumaSocketClientOptions): LumaSocket => {
     return socket;
   };
 
-  socket.onMentorTranscription = (
-    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION],
+  socket.onLearnerTranscription = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION],
   ) => {
-    socket.on(LUMA_SOCKET_LISTEN_EVENTS.MENTOR_TRANSCRIPTION, handler);
+    socket.on(LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION, handler);
     return socket;
   };
 
@@ -162,6 +162,13 @@ export const createLumaSocket = (opts: LumaSocketClientOptions): LumaSocket => {
     handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK],
   ) => {
     socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK, handler);
+    return socket;
+  };
+
+  socket.onAudioOutputAlignment = (
+    handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ALIGNMENT],
+  ) => {
+    socket.on(LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_ALIGNMENT, handler);
     return socket;
   };
 

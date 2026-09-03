@@ -52,6 +52,9 @@ export type GeneratedCourseBundleResponse = {
 };
 export type AiRuntimeConfiguration = PublicConfigurationResponse;
 export type MentorChatOptions = MentorChatRequest;
+export type MentorStreamRequestOptions = {
+  signal?: AbortSignal;
+};
 export type MentorGenerateChatResponse = MentorChatResponse;
 export type MentorJudgeOptions = StructuredGenerationRequest;
 export type MentorJudgeResponse = JudgeResponse;
