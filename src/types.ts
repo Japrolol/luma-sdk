@@ -2,6 +2,7 @@ import { AiCapability, AiCapabilityMode, AiCapabilityProvider } from "./api/gene
 import type {
   AiMentorRoleplayConfigurationResponse,
   AiMentorTeacherConfigurationResponse,
+  AiMentorConfigurationValidationResponse,
   AiJudgeConfigurationResponse,
   AiJudgeConfigurationValidationResponse,
   ArchitectAiMentorLessonResponse,
@@ -94,6 +95,8 @@ export type GenerateAiMentorConfigurationResponse =
   | AiMentorRoleplayConfigurationResponse;
 export type ValidateAiJudgeConfigurationOptions = StructuredGenerationRequest;
 export type ValidateAiJudgeConfigurationResponse = AiJudgeConfigurationValidationResponse;
+export type ValidateAiMentorConfigurationOptions = StructuredGenerationRequest;
+export type ValidateAiMentorConfigurationResponse = AiMentorConfigurationValidationResponse;
 export type CreateEmbeddingsOptions = EmbeddingsRequest;
 export type CreateEmbeddingsResponse = EmbeddingsResponse;
 export type GenerateTranslationsOptions = StructuredGenerationRequest;

@@ -23,10 +23,33 @@ export enum AiRuntimeResolutionErrorCode {
   Disabled = "disabled",
 }
 
+/** AiMentorConfigurationValidationSeverity */
+export enum AiMentorConfigurationValidationSeverity {
+  Error = "error",
+  Warning = "warning",
+}
+
 /** AiMentorConfigurationType */
 export enum AiMentorConfigurationType {
   Teacher = "teacher",
   Roleplay = "roleplay",
+}
+
+/** AiMentorConfigurationField */
+export enum AiMentorConfigurationField {
+  TaskGoal = "taskGoal",
+  Expertise = "expertise",
+  ContentScope = "contentScope",
+  TeachingStyle = "teachingStyle",
+  FeedbackGuidance = "feedbackGuidance",
+  Scenario = "scenario",
+  AiRole = "aiRole",
+  LearnerRole = "learnerRole",
+  CharacterGoal = "characterGoal",
+  Difficulty = "difficulty",
+  FactsAndConstraints = "factsAndConstraints",
+  OpeningInstruction = "openingInstruction",
+  AdditionalInstructions = "additionalInstructions",
 }
 
 /** AiCapabilityProvider */
@@ -250,6 +273,47 @@ export interface AiJudgeValidationIssue {
    * @maxLength 220
    */
   correction: string;
+}
+
+/** AiMentorConfigurationValidationIssue */
+export interface AiMentorConfigurationValidationIssue {
+  /**
+   * Code
+   * @minLength 1
+   */
+  code: string;
+  severity: AiMentorConfigurationValidationSeverity;
+  target: AiMentorConfigurationValidationTarget;
+  /**
+   * Message
+   * @minLength 1
+   */
+  message: string;
+  /**
+   * Correction
+   * @minLength 1
+   */
+  correction: string;
+}
+
+/** AiMentorConfigurationValidationResponse */
+export interface AiMentorConfigurationValidationResponse {
+  /**
+   * Summary
+   * @minLength 1
+   * @maxLength 180
+   */
+  summary: string;
+  /**
+   * Issues
+   * @maxItems 3
+   */
+  issues: AiMentorConfigurationValidationIssue[];
+}
+
+/** AiMentorConfigurationValidationTarget */
+export interface AiMentorConfigurationValidationTarget {
+  field: AiMentorConfigurationField;
 }
 
 /** AiMentorRoleplayConfigurationResponse */
@@ -1133,6 +1197,32 @@ export class API<
         void | HTTPValidationError
       >({
         path: `/api/public/v1/ai/mentor-configuration/generate`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require API Key
+     * @name ValidateMentorConfigurationApiPublicV1AiMentorConfigurationValidatePost
+     * @summary Validate AI Mentor Configuration With Custom Runtime
+     * @request POST:/api/public/v1/ai/mentor-configuration/validate
+     * @secure
+     */
+    validateMentorConfigurationApiPublicV1AiMentorConfigurationValidatePost: (
+      data: StructuredGenerationRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        AiMentorConfigurationValidationResponse,
+        void | HTTPValidationError
+      >({
+        path: `/api/public/v1/ai/mentor-configuration/validate`,
         method: "POST",
         body: data,
         secure: true,

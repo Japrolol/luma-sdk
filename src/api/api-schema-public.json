@@ -369,6 +369,58 @@
         ]
       }
     },
+    "/api/public/v1/ai/mentor-configuration/validate": {
+      "post": {
+        "tags": [
+          "Public - Require API Key"
+        ],
+        "summary": "Validate AI Mentor Configuration With Custom Runtime",
+        "operationId": "validate_mentor_configuration_api_public_v1_ai_mentor_configuration_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StructuredGenerationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiMentorConfigurationValidationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key."
+          },
+          "409": {
+            "description": "The requested runtime is not available for execution."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
     "/api/public/v1/ai/judge-configuration/generate": {
       "post": {
         "tags": [
@@ -1533,6 +1585,25 @@
         ],
         "title": "AiJudgeValidationIssue"
       },
+      "AiMentorConfigurationField": {
+        "type": "string",
+        "enum": [
+          "taskGoal",
+          "expertise",
+          "contentScope",
+          "teachingStyle",
+          "feedbackGuidance",
+          "scenario",
+          "aiRole",
+          "learnerRole",
+          "characterGoal",
+          "difficulty",
+          "factsAndConstraints",
+          "openingInstruction",
+          "additionalInstructions"
+        ],
+        "title": "AiMentorConfigurationField"
+      },
       "AiMentorConfigurationType": {
         "type": "string",
         "enum": [
@@ -1540,6 +1611,87 @@
           "roleplay"
         ],
         "title": "AiMentorConfigurationType"
+      },
+      "AiMentorConfigurationValidationIssue": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Code"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/AiMentorConfigurationValidationSeverity"
+          },
+          "target": {
+            "$ref": "#/components/schemas/AiMentorConfigurationValidationTarget"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Message"
+          },
+          "correction": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Correction"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "target",
+          "message",
+          "correction"
+        ],
+        "title": "AiMentorConfigurationValidationIssue"
+      },
+      "AiMentorConfigurationValidationResponse": {
+        "properties": {
+          "summary": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 1,
+            "title": "Summary"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/AiMentorConfigurationValidationIssue"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "title": "Issues"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "summary",
+          "issues"
+        ],
+        "title": "AiMentorConfigurationValidationResponse"
+      },
+      "AiMentorConfigurationValidationSeverity": {
+        "type": "string",
+        "enum": [
+          "error",
+          "warning"
+        ],
+        "title": "AiMentorConfigurationValidationSeverity"
+      },
+      "AiMentorConfigurationValidationTarget": {
+        "properties": {
+          "field": {
+            "$ref": "#/components/schemas/AiMentorConfigurationField"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "field"
+        ],
+        "title": "AiMentorConfigurationValidationTarget"
       },
       "AiMentorRoleplayConfigurationResponse": {
         "properties": {

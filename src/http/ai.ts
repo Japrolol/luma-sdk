@@ -13,6 +13,8 @@ import {
   TranscribeDictationResponse,
   ValidateAiJudgeConfigurationOptions,
   ValidateAiJudgeConfigurationResponse,
+  ValidateAiMentorConfigurationOptions,
+  ValidateAiMentorConfigurationResponse,
 } from "../types";
 
 export class LumaAiClient {
@@ -55,6 +57,17 @@ export class LumaAiClient {
   ): Promise<ValidateAiJudgeConfigurationResponse> {
     const response =
       await this.apiClient.api.validateJudgeConfigurationApiPublicV1AiJudgeConfigurationValidatePost(
+        opts,
+      );
+
+    return response.data;
+  }
+
+  async validateMentorConfiguration(
+    opts: ValidateAiMentorConfigurationOptions,
+  ): Promise<ValidateAiMentorConfigurationResponse> {
+    const response =
+      await this.apiClient.api.validateMentorConfigurationApiPublicV1AiMentorConfigurationValidatePost(
         opts,
       );
 
