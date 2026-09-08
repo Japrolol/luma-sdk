@@ -3,6 +3,7 @@ import { Agent as HttpsAgent } from "node:https";
 import { API } from "../api/generated-api";
 import { PublicApiExecutions } from "../executions/public-api-executions";
 import { LumaAiClient } from "./ai";
+import { LumaAdminClient } from "./admin";
 import { LumaConfigurationClient } from "./configuration";
 import { LumaCoursesClient } from "./courses";
 import { LumaMentorClient } from "./mentor";
@@ -16,6 +17,7 @@ export type LumaClientOptions = {
 
 export class LumaClient {
   readonly ai: LumaAiClient;
+  readonly admin: LumaAdminClient;
   readonly configuration: LumaConfigurationClient;
   readonly courses: LumaCoursesClient;
   readonly mentor: LumaMentorClient;
@@ -36,8 +38,18 @@ export class LumaClient {
       },
     });
 
+    const adminApiClient = new API({
+      baseURL: opts.baseURL,
+      secure: true,
+      httpsAgent,
+      headers: {
+        "X-Admin-API-Key": opts.apiKey,
+      },
+    });
+
     this.executions = new PublicApiExecutions(this.apiClient);
     this.ai = new LumaAiClient(this.apiClient);
+    this.admin = new LumaAdminClient(adminApiClient, opts.apiKey);
     this.configuration = new LumaConfigurationClient(this.executions);
     this.courses = new LumaCoursesClient(this.executions);
     this.mentor = new LumaMentorClient(this.apiClient);

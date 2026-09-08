@@ -10,6 +10,13 @@
  * ---------------------------------------------------------------
  */
 
+/** ApiKeyConcurrencyTier */
+export enum ApiKeyConcurrencyTier {
+  Small = "small",
+  Medium = "medium",
+  High = "high",
+}
+
 /** AiRuntimeResolutionErrorCode */
 export enum AiRuntimeResolutionErrorCode {
   ApiKeyNotFound = "api_key_not_found",
@@ -21,6 +28,37 @@ export enum AiRuntimeResolutionErrorCode {
   CustomProfileSecretMissing = "custom_profile_secret_missing",
   CoreProviderKeyMissing = "core_provider_key_missing",
   Disabled = "disabled",
+}
+
+/** AiModelProfileKind */
+export enum AiModelProfileKind {
+  Chat = "chat",
+  Embedding = "embedding",
+  SpeechToText = "speechToText",
+  TextToSpeech = "textToSpeech",
+}
+
+/** AiModelDomain */
+export enum AiModelDomain {
+  AiMentor = "aiMentor",
+  AiMentorJudge = "aiMentorJudge",
+  AiMentorConfigurationGenerator = "aiMentorConfigurationGenerator",
+  AiJudgeConfigurationGenerator = "aiJudgeConfigurationGenerator",
+  AiJudgeConfigurationValidator = "aiJudgeConfigurationValidator",
+  Translations = "translations",
+  CourseGeneration = "courseGeneration",
+  CourseGenerationRequirementsAnalysis = "courseGenerationRequirementsAnalysis",
+  CourseGenerationPlanningRouter = "courseGenerationPlanningRouter",
+  CourseGenerationOutlineDesign = "courseGenerationOutlineDesign",
+  CourseGenerationLessonContent = "courseGenerationLessonContent",
+  CourseGenerationAssistantResponse = "courseGenerationAssistantResponse",
+  CourseEvidenceScanner = "courseEvidenceScanner",
+  CourseGenerationVisualAssets = "courseGenerationVisualAssets",
+  CourseGenerationEmbeddings = "courseGenerationEmbeddings",
+  Embeddings = "embeddings",
+  DictationTranscription = "dictationTranscription",
+  VoiceTranscription = "voiceTranscription",
+  VoiceTts = "voiceTts",
 }
 
 /** AiMentorConfigurationValidationSeverity */
@@ -373,6 +411,157 @@ export interface AiMentorTeacherConfigurationResponse {
   openingInstruction: string | null;
   /** Additionalinstructions */
   additionalInstructions: string | null;
+}
+
+/** AiModelAssignmentResponse */
+export interface AiModelAssignmentResponse {
+  /**
+   * Id
+   * @format uuid
+   */
+  id: string;
+  /**
+   * Apikeyid
+   * @format uuid
+   */
+  apiKeyId: string;
+  domain: AiModelDomain;
+  mode: AiCapabilityMode;
+  /** Modelprofileid */
+  modelProfileId: string | null;
+  /**
+   * Createdat
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * Updatedat
+   * @format date-time
+   */
+  updatedAt: string;
+}
+
+/** AiModelAssignmentUpdateRequest */
+export interface AiModelAssignmentUpdateRequest {
+  mode: AiCapabilityMode;
+  /** Modelprofileid */
+  modelProfileId?: string | null;
+}
+
+/** AiModelProfileResponse */
+export interface AiModelProfileResponse {
+  /**
+   * Id
+   * @format uuid
+   */
+  id: string;
+  /**
+   * Organizationid
+   * @format uuid
+   */
+  organizationId: string;
+  /** Name */
+  name: string;
+  kind: AiModelProfileKind;
+  /** Baseurl */
+  baseUrl: string;
+  /** Model */
+  model: string;
+  /** Metadata */
+  metadata: Record<string, any>;
+  /** Hasapikey */
+  hasApiKey: boolean;
+  /**
+   * Createdat
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * Updatedat
+   * @format date-time
+   */
+  updatedAt: string;
+}
+
+/** ApiKeyCreateRequest */
+export interface ApiKeyCreateRequest {
+  /**
+   * Name
+   * @minLength 2
+   * @maxLength 120
+   */
+  name: string;
+}
+
+/** ApiKeyCreateResponse */
+export interface ApiKeyCreateResponse {
+  /**
+   * Id
+   * @format uuid
+   */
+  id: string;
+  /** Name */
+  name: string;
+  /** Key */
+  key: string;
+  /** Prefix */
+  prefix: string;
+  /**
+   * Createdat
+   * @format date-time
+   */
+  createdAt: string;
+}
+
+/** ApiKeyResponse */
+export interface ApiKeyResponse {
+  /**
+   * Id
+   * @format uuid
+   */
+  id: string;
+  /** Name */
+  name: string;
+  /** Prefix */
+  prefix: string;
+  concurrencyTier: ApiKeyConcurrencyTier;
+  /**
+   * Createdat
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * Updatedat
+   * @format date-time
+   */
+  updatedAt: string;
+  /** Lastusedat */
+  lastUsedAt?: string | null;
+  /** Revokedat */
+  revokedAt?: string | null;
+}
+
+/** ApiKeyUpdateRequest */
+export interface ApiKeyUpdateRequest {
+  /** Name */
+  name?: string | null;
+  /** Embeddingapikey */
+  embeddingApiKey?: string | null;
+  /** Agentapikey */
+  agentApiKey?: string | null;
+  /**
+   * Speechtotextapikey
+   * ElevenLabs Scribe speech-to-text API key used for voice mentor transcription.
+   */
+  speechToTextApiKey?: string | null;
+  /** Napkinapikey */
+  napkinApiKey?: string | null;
+  /**
+   * Texttospeechapikey
+   * Text-to-speech provider API key. Currently only Cartesia is supported.
+   */
+  textToSpeechApiKey?: string | null;
+  concurrencyTier?: ApiKeyConcurrencyTier | null;
 }
 
 /** ArchitectAiJudgeBlockingErrorResponse */
@@ -1348,6 +1537,198 @@ export class API<
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require Admin API Key
+     * @name ListOrganizationApiKeysApiPublicV1AdminOrganizationsOrganizationIdApiKeysGet
+     * @summary List Organization Api Keys
+     * @request GET:/api/public/v1/admin/organizations/{organization_id}/api-keys
+     * @secure
+     */
+    listOrganizationApiKeysApiPublicV1AdminOrganizationsOrganizationIdApiKeysGet:
+      (organizationId: string, params: RequestParams = {}) =>
+        this.request<ApiKeyResponse[], HTTPValidationError>({
+          path: `/api/public/v1/admin/organizations/${organizationId}/api-keys`,
+          method: "GET",
+          secure: true,
+          format: "json",
+          ...params,
+        }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require Admin API Key
+     * @name CreateOrganizationApiKeyApiPublicV1AdminOrganizationsOrganizationIdApiKeysPost
+     * @summary Create Organization Api Key
+     * @request POST:/api/public/v1/admin/organizations/{organization_id}/api-keys
+     * @secure
+     */
+    createOrganizationApiKeyApiPublicV1AdminOrganizationsOrganizationIdApiKeysPost:
+      (
+        organizationId: string,
+        data: ApiKeyCreateRequest,
+        params: RequestParams = {},
+      ) =>
+        this.request<ApiKeyCreateResponse, HTTPValidationError>({
+          path: `/api/public/v1/admin/organizations/${organizationId}/api-keys`,
+          method: "POST",
+          body: data,
+          secure: true,
+          type: ContentType.Json,
+          format: "json",
+          ...params,
+        }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require Admin API Key
+     * @name GetOrganizationApiKeyApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdGet
+     * @summary Get Organization Api Key
+     * @request GET:/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}
+     * @secure
+     */
+    getOrganizationApiKeyApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdGet:
+      (organizationId: string, apiKeyId: string, params: RequestParams = {}) =>
+        this.request<ApiKeyResponse, HTTPValidationError>({
+          path: `/api/public/v1/admin/organizations/${organizationId}/api-keys/${apiKeyId}`,
+          method: "GET",
+          secure: true,
+          format: "json",
+          ...params,
+        }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require Admin API Key
+     * @name UpdateOrganizationApiKeyApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdPatch
+     * @summary Update Organization Api Key
+     * @request PATCH:/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}
+     * @secure
+     */
+    updateOrganizationApiKeyApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdPatch:
+      (
+        organizationId: string,
+        apiKeyId: string,
+        data: ApiKeyUpdateRequest,
+        params: RequestParams = {},
+      ) =>
+        this.request<ApiKeyResponse, HTTPValidationError>({
+          path: `/api/public/v1/admin/organizations/${organizationId}/api-keys/${apiKeyId}`,
+          method: "PATCH",
+          body: data,
+          secure: true,
+          type: ContentType.Json,
+          format: "json",
+          ...params,
+        }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require Admin API Key
+     * @name RevokeOrganizationApiKeyApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdDelete
+     * @summary Revoke Organization Api Key
+     * @request DELETE:/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}
+     * @secure
+     */
+    revokeOrganizationApiKeyApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdDelete:
+      (organizationId: string, apiKeyId: string, params: RequestParams = {}) =>
+        this.request<Record<string, string>, HTTPValidationError>({
+          path: `/api/public/v1/admin/organizations/${organizationId}/api-keys/${apiKeyId}`,
+          method: "DELETE",
+          secure: true,
+          format: "json",
+          ...params,
+        }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require Admin API Key
+     * @name GetOrganizationApiKeyConfigurationApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdConfigurationGet
+     * @summary Get Organization Api Key Configuration
+     * @request GET:/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}/configuration
+     * @secure
+     */
+    getOrganizationApiKeyConfigurationApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdConfigurationGet:
+      (organizationId: string, apiKeyId: string, params: RequestParams = {}) =>
+        this.request<PublicConfigurationResponse, HTTPValidationError>({
+          path: `/api/public/v1/admin/organizations/${organizationId}/api-keys/${apiKeyId}/configuration`,
+          method: "GET",
+          secure: true,
+          format: "json",
+          ...params,
+        }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require Admin API Key
+     * @name ListOrganizationApiKeyAssignmentsApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdAiModelAssignmentsGet
+     * @summary List Organization Api Key Assignments
+     * @request GET:/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}/ai-model-assignments
+     * @secure
+     */
+    listOrganizationApiKeyAssignmentsApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdAiModelAssignmentsGet:
+      (organizationId: string, apiKeyId: string, params: RequestParams = {}) =>
+        this.request<AiModelAssignmentResponse[], HTTPValidationError>({
+          path: `/api/public/v1/admin/organizations/${organizationId}/api-keys/${apiKeyId}/ai-model-assignments`,
+          method: "GET",
+          secure: true,
+          format: "json",
+          ...params,
+        }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require Admin API Key
+     * @name UpdateOrganizationApiKeyAssignmentApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdAiModelAssignmentsDomainPatch
+     * @summary Update Organization Api Key Assignment
+     * @request PATCH:/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}/ai-model-assignments/{domain}
+     * @secure
+     */
+    updateOrganizationApiKeyAssignmentApiPublicV1AdminOrganizationsOrganizationIdApiKeysApiKeyIdAiModelAssignmentsDomainPatch:
+      (
+        organizationId: string,
+        apiKeyId: string,
+        domain: AiModelDomain,
+        data: AiModelAssignmentUpdateRequest,
+        params: RequestParams = {},
+      ) =>
+        this.request<AiModelAssignmentResponse, HTTPValidationError>({
+          path: `/api/public/v1/admin/organizations/${organizationId}/api-keys/${apiKeyId}/ai-model-assignments/${domain}`,
+          method: "PATCH",
+          body: data,
+          secure: true,
+          type: ContentType.Json,
+          format: "json",
+          ...params,
+        }),
+
+    /**
+     * No description
+     *
+     * @tags Public - Require Admin API Key
+     * @name ListOrganizationAiModelProfilesApiPublicV1AdminOrganizationsOrganizationIdAiModelProfilesGet
+     * @summary List Organization Ai Model Profiles
+     * @request GET:/api/public/v1/admin/organizations/{organization_id}/ai-model-profiles
+     * @secure
+     */
+    listOrganizationAiModelProfilesApiPublicV1AdminOrganizationsOrganizationIdAiModelProfilesGet:
+      (organizationId: string, params: RequestParams = {}) =>
+        this.request<AiModelProfileResponse[], HTTPValidationError>({
+          path: `/api/public/v1/admin/organizations/${organizationId}/ai-model-profiles`,
+          method: "GET",
+          secure: true,
+          format: "json",
+          ...params,
+        }),
 
     /**
      * @description Creates a draft for a given `integration_id` (the external course identifier you are building a draft for) under the organization resolved from `X-API-Key`. Authorization header required: `X-API-Key: <luma_api_key>`.
