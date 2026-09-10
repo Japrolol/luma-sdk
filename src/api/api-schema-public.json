@@ -15,7 +15,7 @@
         "operationId": "chat_api_public_v1_ai_chat__integration_id__post",
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ],
         "parameters": [
@@ -81,7 +81,7 @@
         "operationId": "get_assets_api_public_v1_ai_assets__integration_id__get",
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ],
         "parameters": [
@@ -155,7 +155,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -200,7 +200,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -252,7 +252,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -304,7 +304,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -364,7 +364,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -416,7 +416,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -468,7 +468,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -520,7 +520,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -572,7 +572,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -624,7 +624,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -676,9 +676,549 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
+      }
+    },
+    "/api/public/v1/admin/organizations/{organization_id}/api-keys": {
+      "get": {
+        "tags": [
+          "Public - Require Admin API Key"
+        ],
+        "summary": "List Organization Api Keys",
+        "operationId": "list_organization_api_keys_api_public_v1_admin_organizations__organization_id__api_keys_get",
+        "security": [
+          {
+            "AdminApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiKeyResponse"
+                  },
+                  "title": "Response List Organization Api Keys Api Public V1 Admin Organizations  Organization Id  Api Keys Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Public - Require Admin API Key"
+        ],
+        "summary": "Create Organization Api Key",
+        "operationId": "create_organization_api_key_api_public_v1_admin_organizations__organization_id__api_keys_post",
+        "security": [
+          {
+            "AdminApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiKeyCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeyCreateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}": {
+      "get": {
+        "tags": [
+          "Public - Require Admin API Key"
+        ],
+        "summary": "Get Organization Api Key",
+        "operationId": "get_organization_api_key_api_public_v1_admin_organizations__organization_id__api_keys__api_key_id__get",
+        "security": [
+          {
+            "AdminApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          },
+          {
+            "name": "api_key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Api Key Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeyResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Public - Require Admin API Key"
+        ],
+        "summary": "Update Organization Api Key",
+        "operationId": "update_organization_api_key_api_public_v1_admin_organizations__organization_id__api_keys__api_key_id__patch",
+        "security": [
+          {
+            "AdminApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          },
+          {
+            "name": "api_key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Api Key Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiKeyUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeyResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Public - Require Admin API Key"
+        ],
+        "summary": "Revoke Organization Api Key",
+        "operationId": "revoke_organization_api_key_api_public_v1_admin_organizations__organization_id__api_keys__api_key_id__delete",
+        "security": [
+          {
+            "AdminApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          },
+          {
+            "name": "api_key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Api Key Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Revoke Organization Api Key Api Public V1 Admin Organizations  Organization Id  Api Keys  Api Key Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}/configuration": {
+      "get": {
+        "tags": [
+          "Public - Require Admin API Key"
+        ],
+        "summary": "Get Organization Api Key Configuration",
+        "operationId": "get_organization_api_key_configuration_api_public_v1_admin_organizations__organization_id__api_keys__api_key_id__configuration_get",
+        "security": [
+          {
+            "AdminApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          },
+          {
+            "name": "api_key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Api Key Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicConfigurationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}/ai-model-assignments": {
+      "get": {
+        "tags": [
+          "Public - Require Admin API Key"
+        ],
+        "summary": "List Organization Api Key Assignments",
+        "operationId": "list_organization_api_key_assignments_api_public_v1_admin_organizations__organization_id__api_keys__api_key_id__ai_model_assignments_get",
+        "security": [
+          {
+            "AdminApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          },
+          {
+            "name": "api_key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Api Key Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AiModelAssignmentResponse"
+                  },
+                  "title": "Response List Organization Api Key Assignments Api Public V1 Admin Organizations  Organization Id  Api Keys  Api Key Id  Ai Model Assignments Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/admin/organizations/{organization_id}/api-keys/{api_key_id}/ai-model-assignments/{domain}": {
+      "patch": {
+        "tags": [
+          "Public - Require Admin API Key"
+        ],
+        "summary": "Update Organization Api Key Assignment",
+        "operationId": "update_organization_api_key_assignment_api_public_v1_admin_organizations__organization_id__api_keys__api_key_id__ai_model_assignments__domain__patch",
+        "security": [
+          {
+            "AdminApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          },
+          {
+            "name": "api_key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Api Key Id"
+            }
+          },
+          {
+            "name": "domain",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/AiModelDomain"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AiModelAssignmentUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiModelAssignmentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/v1/admin/organizations/{organization_id}/ai-model-profiles": {
+      "get": {
+        "tags": [
+          "Public - Require Admin API Key"
+        ],
+        "summary": "List Organization Ai Model Profiles",
+        "operationId": "list_organization_ai_model_profiles_api_public_v1_admin_organizations__organization_id__ai_model_profiles_get",
+        "security": [
+          {
+            "AdminApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AiModelProfileResponse"
+                  },
+                  "title": "Response List Organization Ai Model Profiles Api Public V1 Admin Organizations  Organization Id  Ai Model Profiles Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/public/v1/draft": {
@@ -729,7 +1269,7 @@
         },
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ]
       }
@@ -744,7 +1284,7 @@
         "operationId": "delete_draft_api_public_v1_draft__integration_id__delete",
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ],
         "parameters": [
@@ -797,7 +1337,7 @@
         "operationId": "get_draft_api_public_v1_draft__integration_id__get",
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ],
         "parameters": [
@@ -852,7 +1392,7 @@
         "operationId": "ingest_api_public_v1_draft_ingest__integration_id__post",
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ],
         "parameters": [
@@ -920,7 +1460,7 @@
         "operationId": "delete_ingested_document_api_public_v1_draft_ingest__integration_id___document_id__delete",
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ],
         "parameters": [
@@ -985,7 +1525,7 @@
         "operationId": "get_draft_files_api_public_v1_draft_files__integration_id__get",
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ],
         "parameters": [
@@ -1044,7 +1584,7 @@
         "operationId": "get_draft_messages_api_public_v1_draft_messages__integration_id__get",
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ],
         "parameters": [
@@ -1103,7 +1643,7 @@
         "operationId": "get_generated_course_api_public_v1_draft_generated_course__integration_id__get",
         "security": [
           {
-            "APIKeyHeader": []
+            "OrganizationApiKey": []
           }
         ],
         "parameters": [
@@ -1845,6 +2385,180 @@
         ],
         "title": "AiMentorTeacherConfigurationResponse"
       },
+      "AiModelAssignmentResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "apiKeyId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Apikeyid"
+          },
+          "domain": {
+            "$ref": "#/components/schemas/AiModelDomain"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/AiCapabilityMode"
+          },
+          "modelProfileId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Modelprofileid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updatedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "apiKeyId",
+          "domain",
+          "mode",
+          "modelProfileId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "title": "AiModelAssignmentResponse"
+      },
+      "AiModelAssignmentUpdateRequest": {
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/AiCapabilityMode"
+          },
+          "modelProfileId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Modelprofileid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mode"
+        ],
+        "title": "AiModelAssignmentUpdateRequest"
+      },
+      "AiModelDomain": {
+        "type": "string",
+        "enum": [
+          "aiMentor",
+          "aiMentorJudge",
+          "aiMentorConfigurationGenerator",
+          "aiJudgeConfigurationGenerator",
+          "aiJudgeConfigurationValidator",
+          "translations",
+          "courseGeneration",
+          "courseGenerationRequirementsAnalysis",
+          "courseGenerationPlanningRouter",
+          "courseGenerationOutlineDesign",
+          "courseGenerationLessonContent",
+          "courseGenerationAssistantResponse",
+          "courseEvidenceScanner",
+          "courseGenerationVisualAssets",
+          "courseGenerationEmbeddings",
+          "embeddings",
+          "dictationTranscription",
+          "voiceTranscription",
+          "voiceTts"
+        ],
+        "title": "AiModelDomain"
+      },
+      "AiModelProfileKind": {
+        "type": "string",
+        "enum": [
+          "chat",
+          "embedding",
+          "speechToText",
+          "textToSpeech"
+        ],
+        "title": "AiModelProfileKind"
+      },
+      "AiModelProfileResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Organizationid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/AiModelProfileKind"
+          },
+          "baseUrl": {
+            "type": "string",
+            "title": "Baseurl"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          },
+          "hasApiKey": {
+            "type": "boolean",
+            "title": "Hasapikey"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updatedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "organizationId",
+          "name",
+          "kind",
+          "baseUrl",
+          "model",
+          "metadata",
+          "hasApiKey",
+          "createdAt",
+          "updatedAt"
+        ],
+        "title": "AiModelProfileResponse"
+      },
       "AiRuntimeResolutionErrorCode": {
         "type": "string",
         "enum": [
@@ -1859,6 +2573,225 @@
           "disabled"
         ],
         "title": "AiRuntimeResolutionErrorCode"
+      },
+      "ApiKeyConcurrencyTier": {
+        "type": "string",
+        "enum": [
+          "small",
+          "medium",
+          "high"
+        ],
+        "title": "ApiKeyConcurrencyTier"
+      },
+      "ApiKeyCreateRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "ApiKeyCreateRequest"
+      },
+      "ApiKeyCreateResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "prefix": {
+            "type": "string",
+            "title": "Prefix"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "key",
+          "prefix",
+          "createdAt"
+        ],
+        "title": "ApiKeyCreateResponse"
+      },
+      "ApiKeyResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "prefix": {
+            "type": "string",
+            "title": "Prefix"
+          },
+          "concurrencyTier": {
+            "$ref": "#/components/schemas/ApiKeyConcurrencyTier"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updatedat"
+          },
+          "lastUsedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastusedat"
+          },
+          "revokedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revokedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "prefix",
+          "concurrencyTier",
+          "createdAt",
+          "updatedAt"
+        ],
+        "title": "ApiKeyResponse"
+      },
+      "ApiKeyUpdateRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "embeddingApiKey": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embeddingapikey"
+          },
+          "agentApiKey": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agentapikey"
+          },
+          "speechToTextApiKey": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speechtotextapikey",
+            "description": "ElevenLabs Scribe speech-to-text API key used for voice mentor transcription."
+          },
+          "napkinApiKey": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Napkinapikey"
+          },
+          "textToSpeechApiKey": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Texttospeechapikey",
+            "description": "Text-to-speech provider API key. Currently only Cartesia is supported."
+          },
+          "concurrencyTier": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApiKeyConcurrencyTier"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiKeyUpdateRequest"
       },
       "ArchitectAiJudgeBlockingErrorResponse": {
         "properties": {
@@ -3089,10 +4022,15 @@
       }
     },
     "securitySchemes": {
-      "APIKeyHeader": {
+      "OrganizationApiKey": {
         "type": "apiKey",
         "in": "header",
         "name": "X-API-Key"
+      },
+      "AdminApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Admin-API-Key"
       }
     }
   }

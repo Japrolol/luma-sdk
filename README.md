@@ -39,6 +39,43 @@ await client.courses.chat({
 });
 ```
 
+Each client uses one `apiKey`. Supply an administration key for admin operations
+or an organization feature key for AI and course operations. The API validates
+the key's type and permissions; using a different SDK method does not grant
+additional access. To perform both kinds of operations, create separate clients
+with the appropriate keys.
+
+The SDK sends that key as `X-Admin-API-Key` for `luma.admin` and as `X-API-Key`
+for feature operations, matching the existing API contracts.
+
+```ts
+const luma = createLumaClient({
+  baseURL: "https://your-luma-api.example.com",
+  apiKey: process.env.LUMA_ADMIN_API_KEY,
+});
+
+const keys = await luma.admin.apiKeys.list({ organizationId: "org-123" });
+const created = await luma.admin.apiKeys.create({
+  organizationId: "org-123",
+  name: "Course generation",
+});
+
+await luma.admin.apiKeys.update({
+  organizationId: "org-123",
+  apiKeyId: created.id,
+  name: "Updated course generation",
+});
+
+const configuration = await luma.admin.apiKeys.getConfiguration({
+  organizationId: "org-123",
+  apiKeyId: created.id,
+});
+const assignments = await luma.admin.apiKeys.listAssignments({
+  organizationId: "org-123",
+  apiKeyId: created.id,
+});
+```
+
 ## Quick Start (Socket)
 
 ```ts
@@ -110,7 +147,7 @@ socket.onAudioRecovered((payload: AudioRecoveryPayload) => {
 Options:
 
 - `baseURL?: string` - Luma API base URL.
-- `apiKey?: string` - API key sent as `X-API-Key`.
+- `apiKey?: string` - single client credential; sent as `X-Admin-API-Key` for `client.admin` and `X-API-Key` for feature operations. The API enforces its type and permissions.
 - `httpsAgent?: Agent` - custom Node.js HTTPS agent.
 - `allowInsecureTls?: boolean` - if `true`, uses `rejectUnauthorized: false` (dev only).
 
@@ -137,6 +174,15 @@ Namespaces:
 - `client.ai.generateTranslations(opts)`
 - `client.ai.transcribeDictation(opts)`
 - `client.configuration.get()`
+- `client.admin.apiKeys.list(opts)`
+- `client.admin.apiKeys.create(opts)`
+- `client.admin.apiKeys.get(opts)`
+- `client.admin.apiKeys.update(opts)`
+- `client.admin.apiKeys.revoke(opts)`
+- `client.admin.apiKeys.getConfiguration(opts)`
+- `client.admin.apiKeys.listAssignments(opts)`
+- `client.admin.apiKeys.updateAssignment(opts)`
+- `client.admin.modelProfiles.list(opts)`
 
 The HTTP client intentionally exposes public API operations through namespaces
 instead of flat top-level methods.
