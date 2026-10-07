@@ -1,9 +1,15 @@
-import { AiCapability, AiCapabilityMode, AiCapabilityProvider } from "./api/generated-api";
+import {
+  AiCapability,
+  AiCapabilityMode,
+  AiCapabilityProvider,
+  ReasoningEffort,
+  TaskKind,
+} from "./api/generated-api";
 import type {
   AiMentorRoleplayConfigurationResponse,
   AiMentorTeacherConfigurationResponse,
   AiMentorConfigurationValidationResponse,
-  AiJudgeConfigurationResponse,
+  AiJudgeConfigurationResponseOutput,
   AiJudgeConfigurationValidationResponse,
   ArchitectAiMentorLessonResponse,
   ArchitectAiMentorRoleplayConfigurationResponse,
@@ -41,7 +47,13 @@ export type {
   PublicAiMessage,
   PublicConfigurationResponse,
 } from "./api/generated-api";
-export { AiCapability, AiCapabilityMode, AiCapabilityProvider } from "./api/generated-api";
+export {
+  AiCapability,
+  AiCapabilityMode,
+  AiCapabilityProvider,
+  ReasoningEffort,
+  TaskKind,
+} from "./api/generated-api";
 
 export type IntegrationIdOptions = {
   integrationId: string;
@@ -56,8 +68,7 @@ export type DraftMessage = DraftMessageResponse;
 export type DraftMessagesResponse = DraftMessage[];
 export type GeneratedCourseResponse = ArchitectCourseResponse;
 export type GeneratedCourseAiMentor = ArchitectAiMentorLessonResponse;
-export type GeneratedCourseAiMentorConfiguration =
-  GeneratedCourseAiMentor["aiMentorConfiguration"];
+export type GeneratedCourseAiMentorConfiguration = GeneratedCourseAiMentor["aiMentorConfiguration"];
 export type GeneratedCourseAiMentorTeacherConfiguration =
   ArchitectAiMentorTeacherConfigurationResponse;
 export type GeneratedCourseAiMentorRoleplayConfiguration =
@@ -76,7 +87,7 @@ export type MentorGenerateChatResponse = MentorChatResponse;
 export type MentorJudgeOptions = StructuredGenerationRequest;
 export type MentorJudgeResponse = JudgeResponse;
 export type GenerateAiJudgeConfigurationOptions = StructuredGenerationRequest;
-export type GenerateAiJudgeConfigurationResponse = AiJudgeConfigurationResponse;
+export type GenerateAiJudgeConfigurationResponse = AiJudgeConfigurationResponseOutput;
 export const AI_MENTOR_CONFIGURATION_TYPES = {
   TEACHER: "teacher",
   ROLEPLAY: "roleplay",

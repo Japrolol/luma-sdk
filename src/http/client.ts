@@ -1,9 +1,14 @@
+/**
+ * SDK composition root: shares transport configuration across feature clients
+ * while keeping public and administrative API-key headers separate.
+ */
 import { Agent as HttpsAgent } from "node:https";
 
 import { API } from "../api/generated-api";
 import { PublicApiExecutions } from "../executions/public-api-executions";
 import { LumaAiClient } from "./ai";
 import { LumaAdminClient } from "./admin";
+import { LumaAuthoringClient } from "./authoring";
 import { LumaConfigurationClient } from "./configuration";
 import { LumaCoursesClient } from "./courses";
 import { LumaMentorClient } from "./mentor";
@@ -15,15 +20,18 @@ export type LumaClientOptions = {
   allowInsecureTls?: boolean;
 };
 
+/** Connected feature facades; construction does not open an authoring session. */
 export class LumaClient {
   readonly ai: LumaAiClient;
   readonly admin: LumaAdminClient;
+  readonly authoring: LumaAuthoringClient;
   readonly configuration: LumaConfigurationClient;
   readonly courses: LumaCoursesClient;
   readonly mentor: LumaMentorClient;
   private readonly apiClient: API<unknown>;
   private readonly executions: PublicApiExecutions;
 
+  /** Configure authenticated transports; TLS verification stays enabled unless explicitly disabled. */
   constructor(opts: LumaClientOptions) {
     const httpsAgent =
       opts.httpsAgent ??
@@ -50,12 +58,14 @@ export class LumaClient {
     this.executions = new PublicApiExecutions(this.apiClient);
     this.ai = new LumaAiClient(this.apiClient);
     this.admin = new LumaAdminClient(adminApiClient, opts.apiKey);
+    this.authoring = new LumaAuthoringClient(this.apiClient);
     this.configuration = new LumaConfigurationClient(this.executions);
     this.courses = new LumaCoursesClient(this.executions);
     this.mentor = new LumaMentorClient(this.apiClient);
   }
 }
 
+/** Construct feature clients with the supplied endpoint and integration credentials. */
 export const createLumaClient = (opts: LumaClientOptions): LumaClient => {
   return new LumaClient(opts);
 };

@@ -305,6 +305,9 @@ export type LearnerTranscriptionPayload = MentorStreamEventEnvelope<
   LearnerTranscriptionData
 >;
 
+/** @deprecated Use LearnerTranscriptionPayload with explicit partial/final handling. */
+export type MentorTranscriptionPayload = LearnerTranscriptionPayload;
+
 export type AudioOutputChunkPayload = MentorStreamEventEnvelope<
   (typeof LUMA_MENTOR_STREAM_EVENT_TYPES)["AUDIO_OUTPUT_CHUNK"],
   AudioOutputChunkData
@@ -424,6 +427,9 @@ export interface LumaSocket extends LumaSocketBase {
   onLearnerTranscription(
     handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION],
   ): this;
+
+  /** @deprecated Final-only compatibility adapter; use onLearnerTranscription for all revisions. */
+  onMentorTranscription(handler: (payload: MentorTranscriptionPayload) => void): this;
 
   onAudioOutputChunk(
     handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.AUDIO_OUTPUT_CHUNK],

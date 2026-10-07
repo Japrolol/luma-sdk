@@ -5,6 +5,7 @@ import {
   AudioStopPayload,
   ClientSpeechBoundaryPayload,
   AudioBinaryChunk,
+  LEARNER_TRANSCRIPT_STATUSES,
   LUMA_SOCKET_EMIT_EVENTS,
   LUMA_SOCKET_LISTEN_EVENTS,
   LUMA_SOCKET_MESSAGE_TYPES,
@@ -155,6 +156,15 @@ export const createLumaSocket = (opts: LumaSocketClientOptions): LumaSocket => {
     handler: LumaSocketListenEvents[typeof LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION],
   ) => {
     socket.on(LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION, handler);
+    return socket;
+  };
+
+  socket.onMentorTranscription = (handler) => {
+    socket.on(LUMA_SOCKET_LISTEN_EVENTS.LEARNER_TRANSCRIPTION, (payload) => {
+      // Legacy consumers persist/send the text immediately and cannot consume
+      // partial revisions without creating duplicate learner turns.
+      if (payload.data.status === LEARNER_TRANSCRIPT_STATUSES.FINAL) handler(payload);
+    });
     return socket;
   };
 
